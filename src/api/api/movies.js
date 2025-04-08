@@ -13,3 +13,17 @@ export function movies_choose() {
         
     });
 }
+export function details(id=1) {
+    return service({
+        url: `/movie_list/movie_details/?movie_id=${id}`,//带单个传参写法
+        method: "get",
+        
+    });
+}
+export function comment() {
+    return service({
+        url: "/comment_list/comment_info/",
+        method: "get",
+        
+    });
+}

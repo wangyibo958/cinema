@@ -71,23 +71,23 @@ export default {
   name: 'MovieList',
   data() {
     return {
-      searchQuery: '',
-      activeCategory: 'all',
-      currentYear: '全部年份',
-      showYearDropdown: false,
-      currentPage: 1,
-      totalPages: 5,
-      categories: [
-        { label: '全部', value: 'all' },
-        { label: '动作', value: 'action' },
-        { label: '喜剧', value: 'comedy' },
-        { label: '科幻', value: 'sci-fi' },
-        { label: '爱情', value: 'romance' },
-        { label: '动画', value: 'animation' },
-        { label: '悬疑', value: 'suspense' },
-        { label: '恐怖', value: 'horror' }
-      ],
-      yearOptions: ['全部年份', '2024', '2023', '2022', '2021', '2020', '2019', '更早'],
+      // searchQuery: '',
+      // activeCategory: 'all',
+      // currentYear: '全部年份',
+      // showYearDropdown: false,
+      // currentPage: 1,
+      // totalPages: 5,
+      // categories: [
+      //   { label: '全部', value: 'all' },
+      //   { label: '动作', value: 'action' },
+      //   { label: '喜剧', value: 'comedy' },
+      //   { label: '科幻', value: 'sci_fi' },
+      //   { label: '爱情', value: 'romance' },
+      //   { label: '动画', value: 'animation' },
+      //   { label: '悬疑', value: 'suspense' },
+      //   { label: '恐怖', value: 'horror' }
+      // ],
+      // yearOptions: ['全部年份', '2024', '2023', '2022', '2021', '2020', '2019', '更早'],
       movies: [
         // { id: 1, title: '星际穿越：未知的边界', rating: 4.8, category: 'sci-fi', year: '2023' },
         // { id: 2, title: '海底世界：深海探险', rating: 4.5, category: 'action', year: '2024' },
@@ -100,93 +100,98 @@ export default {
       ]
     }
   },
-  computed: {
-    filteredMovies() {
-      let result = this.movies;
+  // computed: {
+  //   filteredMovies() {
+  //     let result = this.movies;
 
-      // 搜索过滤
-      if (this.searchQuery) {
-        const query = this.searchQuery.toLowerCase();
-        result = result.filter(movie => movie.title.toLowerCase().includes(query));
-      }
+  //     // 搜索过滤
+  //     if (this.searchQuery) {
+  //       const query = this.searchQuery.toLowerCase();
+  //       result = result.filter(movie => movie.title.toLowerCase().includes(query));
+  //     }
 
-      // 分类过滤
-      if (this.activeCategory !== 'all') {
-        result = result.filter(movie => movie.category === this.activeCategory);
-      }
+  //     // 分类过滤
+  //     if (this.activeCategory !== 'all') {
+  //       result = result.filter(movie => movie.category === this.activeCategory);
+  //     }
 
-      // 年份过滤
-      if (this.currentYear !== '全部年份') {
-        result = result.filter(movie => movie.year === this.currentYear);
-      }
+  //     // 年份过滤
+  //     if (this.currentYear !== '全部年份') {
+  //       result = result.filter(movie => movie.year === this.currentYear);
+  //     }
 
-      return result;
-    },
-    visiblePages() {
-      const pages = [];
-      let startPage = Math.max(1, this.currentPage - 2);
-      let endPage = Math.min(this.totalPages, startPage + 4);
+  //     return result;
+  //   },
+  //   visiblePages() {
+  //     const pages = [];
+  //     let startPage = Math.max(1, this.currentPage - 2);
+  //     let endPage = Math.min(this.totalPages, startPage + 4);
 
-      if (endPage - startPage < 4) {
-        startPage = Math.max(1, endPage - 4);
-      }
+  //     if (endPage - startPage < 4) {
+  //       startPage = Math.max(1, endPage - 4);
+  //     }
 
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
+  //     for (let i = startPage; i <= endPage; i++) {
+  //       pages.push(i);
+  //     }
 
-      return pages;
-    }
-  },
+  //     return pages;
+  //   }
+  // },
   methods: {
-    setCategory(category) {
-      this.activeCategory = category;
-      this.currentPage = 1;
-    },
-    toggleYearDropdown() {
-      this.showYearDropdown = !this.showYearDropdown;
-    },
-    selectYear(year) {
-      this.currentYear = year;
-      this.showYearDropdown = false;
-      this.currentPage = 1;
-    },
-    goToMovieDetail(movieId) {
-      // 在实际应用中，这里会导航到电影详情页
-      console.log('跳转到电影详情页，ID：', movieId);
-      this.$router.push('/detailsWeb')
-    },
-    goToPage(page) {
-      this.currentPage = page;
-    },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    }
+    // setCategory(category) {
+    //   this.activeCategory = category;
+    //   this.currentPage = 1;
+    // },
+    // toggleYearDropdown() {
+    //   this.showYearDropdown = !this.showYearDropdown;
+    // },
+    // selectYear(year) {
+    //   this.currentYear = year;
+    //   this.showYearDropdown = false;
+    //   this.currentPage = 1;
+    // },
+    // goToMovieDetail(movieId) {
+    //   // 在实际应用中，这里会导航到电影详情页
+    //   console.log('跳转到电影详情页，ID：', movieId);
+    //   this.$router.push('/detailsWeb')
+    // },
+    // goToPage(page) {
+    //   this.currentPage = page;
+    // },
+    // prevPage() {
+    //   if (this.currentPage > 1) {
+    //     this.currentPage--;
+    //   }
+    // },
+    // nextPage() {
+    //   if (this.currentPage < this.totalPages) {
+    //     this.currentPage++;
+    //   }
+    // }
   },
 
-  creat() {
+  created() {
     movies_choose()
       .then(res => {
         console.log(res);
         const { status, data } = res
         if (status == 0) {
-          this.movies = data.map(item => {
-            title: item.mv_name
-            rating: item.d_rate
-            year: item.release_date
-            category: item.mv_type
+          this.movies = data.map(item => ({
+            title: item.mv_name,
+            rating: item.d_rate,
+            year: item.release_date,
+            category: item.mv_type,
             poster:item.image_link
 
 
-          })
+          }))
+          //每页最多20页
+          this.totalPages=Math.ceil(this.movies.length/20)
 
+        }else{
+          console.log(err);
+          
         }
 
 

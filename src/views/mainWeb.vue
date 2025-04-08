@@ -35,7 +35,8 @@
     <div class="movie-container">
       <div class="movie-grid">
         <div v-for="(movie, index) in movies" :key="index" class="movie-card" @mouseover="hoverEffect = movie.id"
-          @mouseleave="hoverEffect = null" @click="goTodetails">
+          @mouseleave="hoverEffect = null" @click="goTodetails(movie.id)">
+          <!-- 携带路径id -->
           <div class="poster-wrapper">
             <img :src="movie.poster" :alt="movie.title" class="poster"
               :style="{ transform: hoverEffect === movie.id ? 'scale(1.05)' : 'none' }">
@@ -77,9 +78,9 @@ export default {
 
       this.$router.push('/moviesWeb')
     },
-    goTodetails() {
+    goTodetails(id) {
       this.$router.push('/detailsWeb')
-    }
+    }//传参  id  待修改
 
   },
 

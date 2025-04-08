@@ -83,18 +83,18 @@
                             <div class="user-name-date">
                                 <h4>{{ comment.username }}</h4>
                                 <div class="user-rating">
-                                    <span v-for="n in 5" :key="n" class="small-star"
-                                        :class="{ 'filled': n <= comment.rating }"></span>
+                                    <!-- <span v-for="n in 5" :key="n" class="small-star"
+                                        :class="{ 'filled': n <= comment.rating }"></span> -->
                                     <span class="comment-date">{{ comment.date }}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="likes">
-                            <span class="like-count">{{ comment.likes }}</span>
+                        <!-- <div class="likes">
+                            
                             <button class="like-btn" @click="likeComment(index)">
                                 <span class="thumb-icon"></span>
                             </button>
-                        </div>
+                        </div> -->
                     </div>
                     <p class="comment-content">{{ comment.content }}</p>
                 </div>
@@ -104,48 +104,29 @@
 </template>
 
 <script>
+import { details } from './api/api/movies';
+import { comment } from './api/api/movies';
 export default {
     name: 'MovieDetail',
     data() {
         return {
             movie: {
-                title: '量子幻境',
-                director: '陈思远',
-                actors: ['周雨晴', '李云帆', '张明哲', '王语心'],
-                releaseDate: '2024年3月15日',
-                description: '在2045年的未来世界，量子计算技术突破带来了人类文明的巨大变革。主人公周雨晴是一位天才量子物理学家，她发现了一个可以穿越时空宇宙的微人工智。在AI研究员李云帆的协助下，他们必须在72小时内阻止一场足以毁灭多元宇宙的灾难。这部科幻巨制将带领观众穿越时空，探索人性与科技的终极奥秘。',
-                rating: '9.2',
-                tags: ['中国大陆', '科幻', '悬疑', '动作']
+                title: '',
+                director: '',
+                actors: [],
+                releaseDate: '',
+                description: '',
+                rating: '',
+                tags: []
             },
-            castMembers: [
-                { name: '周雨晴', role: '女主角' },
-                { name: '李云帆', role: '男主角' },
-                { name: '张明哲', role: '配角' },
-                { name: '王语心', role: '配角' }
-            ],
+            castMembers: [],//演员列表
             newComment: '',
             userRating: 0,
             comments: [
                 {
                     username: '星辰大海',
-                    rating: 5,
                     date: '2024-03-15',
                     content: '这部电影的视觉效果令人惊叹！量子幻境的设计极其创新，大胆展示了宇宙的神秘特性与物理世界奥秘。周雨晴的演技也很出众，完美诠释了天才物理学家的形象。故事情节紧凑，科幻元素与人文关怀完美结合。绝对是今年最值得期待的科幻大片！',
-                    likes: 328
-                },
-                {
-                    username: '光影随心',
-                    rating: 4,
-                    date: '2024-03-16',
-                    content: '剧本构思巧妙，将量子物理原理巧妙地与生动的故事情节融合在一起。让观众既能感受科幻的魅力，又不会陷入深奥难懂。特别是李云帆饰演的AI研究员，他和周雨晴的对手戏很精彩。唯一的遗憾是结尾略显仓促，期待导演剪辑版！',
-                    likes: 215
-                },
-                {
-                    username: '极限彩虹',
-                    rating: 5,
-                    date: '2024-03-16',
-                    content: '作为一个物理专业的学生，我非常欣赏这部能对量子理论的严谨诠释。视觉设计和特效超乎想象，但更让我惊喜的是在中对科学家形象的真实刻画。周雨晴演绎的角色特点与人文特质，与在面对道德困境时的科技伦理观令人深思。',
-                    likes: 167
                 }
             ]
         }
@@ -168,16 +149,50 @@ export default {
                 rating: this.userRating,
                 date: formattedDate,
                 content: this.newComment,
-                likes: 0
+                
             });
 
             this.newComment = '';
             this.userRating = 0;
         },
-        likeComment(index) {
-            this.comments[index].likes++;
-        }
+        
+    },
+
+    created(){
+        details()
+        .then(res=>{
+            console.log(res);
+            const {status,data}=res
+            if(status==0){
+                this.status=data.map(item=>({
+                    title:item.mv_name,
+                    director:item.director,
+                    actors:item.scenarist,//主演
+                    releaseDate:item.release_date,
+                    description:item.quote,
+                    rating:item.d_rate,
+                    tags:item.mv_type,
+                    castMembers:item.leader,//演员
+
+
+                    //评论区
+                    username:item.user,
+                    date:item.create_time,
+                    content:item.content,
+                    
+                }))
+            }else{
+                console.log(err);
+                
+            }
+            
+        })
+        .catch(err=>{
+            console.log(err);
+            
+        })
     }
+
 }
 </script>
 
@@ -496,12 +511,6 @@ export default {
     font-size: 12px;
     margin-left: 10px;
 }
-
-.likes {
-    display: flex;
-    align-items: center;
-}
-
 .like-count {
     font-size: 14px;
     margin-right: 5px;

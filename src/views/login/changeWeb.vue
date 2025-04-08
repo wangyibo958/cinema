@@ -56,7 +56,7 @@ export default {
             else {
                 const senddata = {
                     username: this.input,
-                    old_passwore: this.password,
+                    old_password: this.password,
                     new_password: this.newPassword,
                     phone: this.phonenum
 
