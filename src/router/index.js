@@ -17,11 +17,7 @@ const routes = [
       { path: 'whoWeb', name: 'WhoWeb', component: () => import('@/views/whoWeb.vue') },
       { path: 'changeWeb', name: 'ChangeWeb', component: () => import('@/views/login/changeWeb.vue') },
       { path: 'loginPage', name: 'loginPage', component: () => import('@/views/loginPage.vue') },
-      {
-        path: 'changeWeb',
-        name: 'ChangeWeb',
-        component: () => import('@/views/login/changeWeb.vue')
-      },
+  
       { path: 'detailsWeb', name: 'DetailsWeb', component: () => import('@/detailsWeb.vue') },
       
       {

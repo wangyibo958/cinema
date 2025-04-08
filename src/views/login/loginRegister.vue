@@ -25,7 +25,6 @@
 
 <script>
 import { register } from '@/api/api/login.js';
-import axios from 'axios';
 export default {
     data() {
         return {
@@ -59,23 +58,29 @@ export default {
                 this.$message.error('请输入电话号码');
             } else if (!/^\d+$/.test(this.form.phone)) {
                 this.$message.error('请输入正确电话号码');
-            } else if (this.form.password.length<5){
+            } else if (this.form.password.length < 5) {
                 this.$message.error('密码不能小于五位');
-            }else if (this.form.username.length<5){
+            } else if (this.form.username.length < 5) {
                 this.$message.error('用户名不能小于五位');
             }
             else {
                 register(this.form)
-                .then(res =>{
-                    // console.log(res);
-                    this.$message.success("注册成功，请登录")
-                    this.$router.push('/loginLogin');
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-                
+                    .then(res => {
+                        // console.log(res);
+                        this.$message.success("注册成功，请登录")
+                        this.$router.push('/loginLogin');
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+
             }
+
+
+ 
+           
+            
+
         }
     }
 };

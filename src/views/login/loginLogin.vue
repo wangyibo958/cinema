@@ -50,6 +50,7 @@ export default {
                         if (status == 0) {
                             const token = 'Bearer' + ' ' + data.access_token
                             setToken(token)
+                            localStorage.setItem('refreshToken',data.refresh_token)
                             this.$message.success('登陆成功');
                             this.$router.push('/personalHub');
                         } else {
@@ -60,7 +61,40 @@ export default {
                         console.log(err);
                     })
             }
-        }
+        },
+
+
+        // async handleLogin() {
+        //     try {
+        //         const res = await login(this.form)
+        //         if (res.status === 0) {
+        //             const token = 'Bearer ' + res.data.access_token
+        //             setToken(token)
+
+        //             // 添加用户信息预加载
+        //             const userRes = await personal()
+        //             this.$store.commit('SET_USER_INFO', userRes.data)
+
+        //             this.$message.success('登录成功')
+        //             this.$router.push({
+        //                 path: '/personalHub',
+        //                 query: {
+        //                     _fresh: Date.now() // 防止路由缓存
+        //                 }
+        //             })
+        //         }
+        //     } catch (err) {
+        //         console.error('登录失败:', err)
+        //         this.$message.error(err.message || '登录失败')
+        //     }
+        // }
+
+
+
+
+
+
+
         /**
          * handleLogin asys() {
             * try{

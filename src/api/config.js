@@ -4,7 +4,7 @@ import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { Message } from 'element-ui'
 import router from '@/router'
-import { getToken, removeToken } from '@/utils/setToken'
+import { getToken, removeToken } from '@/utils/setToken';
 
 // 创建可配置实例
 const createService = (baseURL = '/api') => {
@@ -24,7 +24,7 @@ const createService = (baseURL = '/api') => {
       nprogress.start()
       // 自动携带 Token
       if (getToken()) {
-        config.headers.Authorization = `Bearer ${getToken()}`
+        config.headers.Authorization = getToken()
       }
       return config
     },
@@ -33,6 +33,14 @@ const createService = (baseURL = '/api') => {
       return Promise.reject(error)
     }
   )
+
+
+
+
+  
+
+
+
 
   // 响应拦截器
   service.interceptors.response.use(
@@ -68,6 +76,12 @@ const createService = (baseURL = '/api') => {
    * @param {AxiosError} error 
    */
   const handleError = (error) => {
+
+
+
+
+
+
     // HTTP 状态码错误处理
     if (error.response) {
       const { status, data } = error.response

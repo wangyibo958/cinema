@@ -4,20 +4,17 @@
       <input type="text" placeholder="搜索电影" v-model="searchQuery">
       <el-button icon="el-icon-search" circle></el-button>
     </div>
-    
+
     <div class="category-filter">
 
       <!-- 电影类型搜索 -->
       <div class="category-tabs">
-        <div 
-          v-for="(category, index) in categories" 
-          :key="index" 
-          :class="['category-tab', { active: activeCategory === category.value }]"
-          @click="setCategory(category.value)">
+        <div v-for="(category, index) in categories" :key="index"
+          :class="['category-tab', { active: activeCategory === category.value }]" @click="setCategory(category.value)">
           {{ category.label }}
         </div>
       </div>
-      
+
 
       <!-- 年份搜索 -->
       <div class="year-filter">
@@ -26,48 +23,37 @@
           <i class="el-icon-arrow-down"></i>
         </div>
         <div class="year-options" v-if="showYearDropdown">
-          <div 
-            v-for="(year, index) in yearOptions" 
-            :key="index" 
-            class="year-option"
-            @click="selectYear(year)">
+          <div v-for="(year, index) in yearOptions" :key="index" class="year-option" @click="selectYear(year)">
             {{ year }}
           </div>
         </div>
       </div>
     </div>
-    
+
 
     <!-- 电影板块 -->
     <div class="movies-grid">
-      <div 
-        v-for="(movie, index) in filteredMovies" 
-        :key="index" 
-        class="movie-card"
-        @click="goToMovieDetail(movie.id)">
-        <div class="movie-poster"></div>
+      <div v-for="(movie, index) in filteredMovies" :key="index" class="movie-card" @click="goToMovieDetail(movie.id)">
+        <div class="movie-poster"> <img :src="movie.poster" :alt="movie.title" class="poster"
+          :style="{ transform: hoverEffect === movie.id ? 'scale(1.05)' : 'none' }"></div>
         <h3 class="movie-title">{{ movie.title }}</h3>
         <div class="movie-rating">
           <div class="rating-stars">
-            <span v-for="n in 5" :key="n" class="star" :class="{'filled': n <= Math.round(movie.rating)}"></span>
+            <span v-for="n in 5" :key="n" class="star" :class="{ 'filled': n <= Math.round(movie.rating) }"></span>
             <span class="rating-score">{{ movie.rating }}</span>
           </div>
-          
+
         </div>
       </div>
     </div>
-    
+
 
     <!-- Page -->
     <div class="pagination">
       <div class="page-nav prev" @click="prevPage" :class="{ disabled: currentPage === 1 }">
         <i class="arrow-icon left"></i>
       </div>
-      <div 
-        v-for="page in visiblePages" 
-        :key="page" 
-        class="page-number"
-        :class="{ active: currentPage === page }"
+      <div v-for="page in visiblePages" :key="page" class="page-number" :class="{ active: currentPage === page }"
         @click="goToPage(page)">
         {{ page }}
       </div>
@@ -79,6 +65,8 @@
 </template>
 
 <script>
+
+import { movies_choose } from '@/api/api/movies';
 export default {
   name: 'MovieList',
   data() {
@@ -101,52 +89,52 @@ export default {
       ],
       yearOptions: ['全部年份', '2024', '2023', '2022', '2021', '2020', '2019', '更早'],
       movies: [
-        { id: 1, title: '星际穿越：未知的边界', rating: 4.8, category: 'sci-fi', year: '2023' },
-        { id: 2, title: '海底世界：深海探险', rating: 4.5, category: 'action', year: '2024' },
-        { id: 3, title: '时光旅人：未来纪元', rating: 4.7, category: 'sci-fi', year: '2023' },
-        { id: 4, title: '龙族传说：东方神话', rating: 4.6, category: 'animation', year: '2024' },
-        { id: 5, title: '心灵迷宫：记忆追踪', rating: 4.9, category: 'suspense', year: '2022' },
-        { id: 6, title: '未来战士：机械觉醒', rating: 4.4, category: 'action', year: '2023' },
-        { id: 7, title: '奇幻森林：魔法之源', rating: 4.3, category: 'animation', year: '2024' },
-        { id: 8, title: '都市传说：平行空间', rating: 4.7, category: 'sci-fi', year: '2022' }
+        // { id: 1, title: '星际穿越：未知的边界', rating: 4.8, category: 'sci-fi', year: '2023' },
+        // { id: 2, title: '海底世界：深海探险', rating: 4.5, category: 'action', year: '2024' },
+        // { id: 3, title: '时光旅人：未来纪元', rating: 4.7, category: 'sci-fi', year: '2023' },
+        // { id: 4, title: '龙族传说：东方神话', rating: 4.6, category: 'animation', year: '2024' },
+        // { id: 5, title: '心灵迷宫：记忆追踪', rating: 4.9, category: 'suspense', year: '2022' },
+        // { id: 6, title: '未来战士：机械觉醒', rating: 4.4, category: 'action', year: '2023' },
+        // { id: 7, title: '奇幻森林：魔法之源', rating: 4.3, category: 'animation', year: '2024' },
+        // { id: 8, title: '都市传说：平行空间', rating: 4.7, category: 'sci-fi', year: '2022' }
       ]
     }
   },
   computed: {
     filteredMovies() {
       let result = this.movies;
-      
+
       // 搜索过滤
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         result = result.filter(movie => movie.title.toLowerCase().includes(query));
       }
-      
+
       // 分类过滤
       if (this.activeCategory !== 'all') {
         result = result.filter(movie => movie.category === this.activeCategory);
       }
-      
+
       // 年份过滤
       if (this.currentYear !== '全部年份') {
         result = result.filter(movie => movie.year === this.currentYear);
       }
-      
+
       return result;
     },
     visiblePages() {
       const pages = [];
       let startPage = Math.max(1, this.currentPage - 2);
       let endPage = Math.min(this.totalPages, startPage + 4);
-      
+
       if (endPage - startPage < 4) {
         startPage = Math.max(1, endPage - 4);
       }
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
-      
+
       return pages;
     }
   },
@@ -181,7 +169,35 @@ export default {
         this.currentPage++;
       }
     }
+  },
+
+  creat() {
+    movies_choose()
+      .then(res => {
+        console.log(res);
+        const { status, data } = res
+        if (status == 0) {
+          this.movies = data.map(item => {
+            title: item.mv_name
+            rating: item.d_rate
+            year: item.release_date
+            category: item.mv_type
+            poster:item.image_link
+
+
+          })
+
+        }
+
+
+      })
+      .catch(err => {
+        console.log(err);
+
+
+      })
   }
+
 }
 </script>
 
@@ -193,7 +209,7 @@ export default {
   font-family: 'Arial', sans-serif;
   background-color: rgb(232, 245, 255);
   min-height: 100vh;
-  
+
 }
 
 .search-bar {
@@ -235,11 +251,14 @@ input {
 .category-tabs {
   display: flex;
   overflow-x: auto;
-  scrollbar-width: none; /* 隐藏滚动条 Firefox */
-  -ms-overflow-style: none; /* 隐藏滚动条 IE/Edge */
- 
+  scrollbar-width: none;
+  /* 隐藏滚动条 Firefox */
+  -ms-overflow-style: none;
+  /* 隐藏滚动条 IE/Edge */
+
 }
-.category-tab:hover{
+
+.category-tab:hover {
   color: white;
   background-color: #79b4f7bf;
   transform: translateY(-1px);
@@ -248,7 +267,8 @@ input {
 }
 
 .category-tabs::-webkit-scrollbar {
-  display: none; /* 隐藏滚动条 Chrome/Safari */
+  display: none;
+  /* 隐藏滚动条 Chrome/Safari */
 }
 
 .category-tab {
@@ -282,7 +302,8 @@ input {
   user-select: none;
   background-color: white;
 }
-.year-filter :hover{
+
+.year-filter :hover {
   color: white;
   background-color: #72b3fe;
 }
@@ -320,25 +341,25 @@ input {
 
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(5,1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 40px;
   margin-bottom: 40px;
 }
 
 @media (max-width: 992px) {
- .movies-grid {
+  .movies-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 768px) {
- .movies-grid {
+  .movies-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
- .movies-grid {
+  .movies-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -355,7 +376,8 @@ input {
 .movie-poster {
   width: 100%;
   height: 0;
-  padding-bottom: 150%; /* 2:3 的宽高比 */
+  padding-bottom: 150%;
+  /* 2:3 的宽高比 */
   background-color: #ccc;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -367,20 +389,27 @@ input {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: flex; /* 改为 flex 布局 */
-  align-items: center; /* 垂直居中 */
+  display: flex;
+  /* 改为 flex 布局 */
+  align-items: center;
+  /* 垂直居中 */
 }
 
 .movie-rating {
-  display: flex; /* 改为 flex 布局 */
-  flex-direction: column; /* 垂直排列子元素 */
-  align-items: flex-start; /* 子元素左对齐 */
+  display: flex;
+  /* 改为 flex 布局 */
+  flex-direction: column;
+  /* 垂直排列子元素 */
+  align-items: flex-start;
+  /* 子元素左对齐 */
 }
 
 .rating-stars {
   display: flex;
-  margin-right: 0; /* 移除右边距 */
-  margin-bottom: 5px; /* 增加底部边距 */
+  margin-right: 0;
+  /* 移除右边距 */
+  margin-bottom: 5px;
+  /* 增加底部边距 */
   margin-left: 7px;
 
 }

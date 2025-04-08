@@ -19,9 +19,9 @@
                         <div class="avatar-placeholder"></div>
                     </div>
                     <div class="info-section">
-                        <div class="name">{{ userInfo.name }}</div>
-                        <div class="register-date">注册时间：{{ userInfo.registerDate }}</div>
-                        <div class="phone">手机号码：{{ userInfo.phone }}</div>
+                        <div class="name">{{ userInfo.name || '加载中..' }}</div>
+                        <div class="register-date">注册时间：{{ userInfo.registerDate || '--' }}</div>
+                        <div class="phone">手机号码：{{ userInfo.phone || '未绑定' }}</div>
                     </div>
                     <div class="edit-button">
                         <el-button type="primary" size="small" @click="goTochange">修改信息</el-button>
@@ -42,19 +42,24 @@
 
                         <div class="order-content">
                             <div class="cont1">
+
                                 <div class="cinema-info">
-                                <div>影院：{{ order.cinema }}</div>
-                                <div class="order-number">订单号：{{ order.orderNumber }}</div>
-                                <div class="order-time">订单时间：{{ order.orderTime }}</div>
+                                    <div>影院：{{ order.cinema }}</div>
+                                    <div class="order-number">订单号：{{ order.orderNumber }}</div>
+                                    <div class="order-time">订单时间：{{ order.orderTime }}</div>
+
+
+                                </div>
+
+
+                                <div class="movie-info">
+                                    <div class="movie-name">影片名称：{{ order.movieName }}</div>
+                                    <div class="seat-info">座位：{{ order.seats }}</div>
+                                    <div class="movie-type">放映设备：{{ order.movieType }}</div>
+                                </div>
+
                             </div>
-                            <div class="movie-info">
-                                <div class="movie-name">{{ order.movieName }}</div>
-                                <div class="seat-info">座位：{{ order.seats }}</div>
-                                <div class="movie-type">{{ order.movieType }}</div>
-                            </div>
-                            
-                            </div>
-                            
+
                             <!-- 电影海报 -->
                             <div class="film-picture">
                                 <img :src="order.picture" :alt="order.movieName" class="picture"
@@ -63,8 +68,8 @@
 
                         </div>
                         <div class="price-info">
-                                <div class="price">票价：<span class="amount">¥{{ order.price }}</span></div>
-                            </div>
+                            <div class="price">票价：<span class="amount">¥{{ order.price }}</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,63 +79,116 @@
 </template>
 
 <script>
+
+import { personal } from '@/api/api/login';
+import { removeToken, setToken } from '@/utils/setToken';
+import { order } from '@/api/api/login';
 export default {
     name: 'UserProfile',
     data() {
         return {
             userInfo: {
-                name: '陈思远',
-                registerDate: '2023-05-15',
-                phone: '138 **** 5678'
+                name: '',
+                registerDate: '',
+                phone: ''
             },
-            orders: [
-                {
-                    id: 1,
-                    userName: '陈思远',
-                    cinema: '万达影城 (北京朝阳大悦城店)',
-                    orderNumber: 'ORDER202401150001',
-                    orderTime: '2024-01-15 14:30',
-                    movieName: '流浪地球3',
-                    seats: '7排9座、7排10座',
-                    movieType: 'IMAX 3D',
-                    price: '156.00',
-                    picture: ''
-                },
-                {
-                    id: 2,
-                    userName: '陈思远',
-                    cinema: '金逸影城 (北京望京店)',
-                    orderNumber: 'ORDER202401100002',
-                    orderTime: '2024-01-10 19:45',
-                    movieName: '我们的岁月',
-                    seats: '5排12座',
-                    movieType: '杜比全景声',
-                    price: '68.00',
-                    picture: ''
-                },
-                {
-                    id: 3,
-                    userName: '陈思远',
-                    cinema: '首都电影院 (西单店)',
-                    orderNumber: 'ORDER202401050003',
-                    orderTime: '2024-01-05 20:15',
-                    movieName: '热带往事',
-                    seats: '8排15座、8排16座',
-                    movieType: 'IMAX 2D',
-                    price: '138.00',
-                    picture: ''
-                }
-            ]
+            orders: {
+                cinema: '',
+                orderNumber: '',
+                orderTime: '',
+                movieName: '',
+                seats: '',
+                movieType: '',
+                price: '',
+            },
+            hoverEffect: null
         }
     },
+
     methods: {
+
+        logout() {
+            // 移除 token
+            removeToken();
+            console.log('已退出登录，Token 已移除');
+        },
         goBack() {
-            this.$router.go(-3)
+            this.$router.go(-3);
         },
         goTochange() {
-            this.$router.push('/changeWeb')
+            this.$router.push('/changeWeb');
+        },
+
+
+        //时间格式化
+        formatDate(dateString) {
+            if (dateString) {
+                return new Date(dateString).toISOString().split('T')[0];
+            }
+            return '未知日期';
+        },
+        formatDateTime(dateString) {
+            if (dateString) {
+                return new Date(dateString).toLocaleString();
+            }
+            return '未知时间';
         }
-    }
+
+    },
+
+    async created() {
+        try {
+            //获取用户信息
+            personal()
+                .then(res => {
+                    const { status, data } = res
+                    if (status == 0) {
+                        console.log(data);
+                        this.userInfo.name = data.username
+                        this.userInfo.phone = data.phone
+                        this.userInfo.registerDate = data.create_time
+                    } else {
+                        this.$message.error('  ')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+
+                })
+
+            order()
+                .then(res => {
+                    const { status, data } = res
+                    if (status == 0) {
+                        console.log(data);
+                        this.order.cinema = data.cinema
+                        this.order.orderNumber = data.order_number
+                        this.order.orderTime = data.ordering_time
+                        this.order.movieName = data.movie
+                        this.order.seats = data.seat_number
+                        this.order.movieType = data.auditorium_type
+                        this.order.price = data.ticket_price
+                    } else {
+                        this.$message.error('  ')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+
+                })
+
+
+
+        } catch (err) {
+            console.error('数据加载失败:', err)
+            this.$message.error('用户信息加载失败')
+
+        }
+    },
+
+
+
+
 }
 </script>
 
@@ -276,9 +334,8 @@ export default {
     justify-content: space-between;
 
 }
-.cont1{
-    
-}
+
+.cont1 {}
 
 /* 电影海报 */
 .film-picture {
@@ -290,11 +347,12 @@ export default {
     /* margin-bottom: ; */
     box-shadow: 4px 4px 10px rgb(133, 133, 133);
 }
-.picture{
+
+.picture {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    
+
 }
 
 
