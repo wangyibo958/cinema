@@ -36,12 +36,3 @@ export function change(data) {
         data
     });
 }
-
-
-export function refresh(data){
-    return service({
-        url:"/token/refresh/",
-        method:"post",
-        data
-    })
-}

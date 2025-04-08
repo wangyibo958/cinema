@@ -34,18 +34,6 @@ const routes = [
         path: 'personalHub',
         name: 'PersonalHub',
         component: () => import('@/views/login/personalHub.vue'),
-        children:[
-          {
-            path: 'myOrders',
-            name: 'MyOrders',
-            component: () => import('@/views/login/myOrders.vue')
-          },
-          {
-            path: 'personalCenter',
-            name: 'PersonalCenter',
-            component: () => import('@/views/login/personalCenter.vue'),
-          }
-        ]
       },
       
      
