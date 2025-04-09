@@ -6,6 +6,8 @@ export function movies() {
         
     });
 }
+
+//影片筛选
 export function movies_choose() {
     return service({
         url: "/filter/mv_type_filter/",
@@ -13,13 +15,15 @@ export function movies_choose() {
         
     });
 }
-export function details(id=1) {
+export function details(id="1") {
     return service({
-        url: `/movie_list/movie_details/?movie_id=${id}`,//带单个传参写法
+        url: `/movie_list/movie_details/?movie_id=${id}`,//带单个传参写法  多个参数用&连接
         method: "get",
         
     });
 }
+
+//电影详情评论
 export function comment() {
     return service({
         url: "/comment_list/comment_info/",

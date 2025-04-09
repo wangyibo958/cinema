@@ -47,9 +47,23 @@
       </div>
     </div>
 
-    <div class="btm">
 
+    <!-- 底部翻页 -->
+    <div class="btm">
+      <!-- <div class="p-pagination">
+      <div class="p-page-nav prev" @click="prevPage" :class="{ disabled: currentPage === 1 }">
+        <i class="p-arrow-icon left"></i>
+      </div>
+      <div v-for="page in visiblePages" :key="page" class="p-page-number" :class="{ active: currentPage === page }"
+        @click="goToPage(page)">
+        {{ page }}
+      </div>
+      <div class="p-page-nav next" @click="nextPage" :class="{ disabled: currentPage === totalPages }">
+        <i class="p-arrow-icon right"></i>
+      </div>
+    </div> -->
     </div>
+    
   </div>
 </template>
 <script>
@@ -79,7 +93,7 @@ export default {
       this.$router.push('/moviesWeb')
     },
     goTodetails(id) {
-      this.$router.push('/detailsWeb')
+      this.$router.push(`/detailsWeb?id=${id}`)
     }//传参  id  待修改
 
   },
@@ -260,31 +274,69 @@ body {
 
 }
 
-/* 横向滚动布局方案（备用）
-  .movie-scroll {
-    display: flex;
-    overflow-x: auto;
-    padding: 20px;
-    gap: 20px;
-  }
-  
-  .movie-item {
-    flex: 0 0 180px;
-  }
-  
-  .scroll-poster {
-    width: 180px;
-    height: 270px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .scroll-title {
-    margin: 10px 0;
-    font-size: 14px;
-    text-align: center;
-  }
-   */
+
+/* 页面 */
+
+.p-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.p-page-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.p-page-number.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.p-page-nav {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin: 0 5px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid gainsboro;
+}
+
+.p-page-nav.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.p-arrow-icon {
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #666;
+  border-right: 2px solid #666;
+}
+
+.p-arrow-icon.left {
+  transform: rotate(-135deg);
+
+}
+
+.p-arrow-icon.right {
+  transform: rotate(45deg);
+}
+
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .main {

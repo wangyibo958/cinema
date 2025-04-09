@@ -1,8 +1,16 @@
 <template>
     <div class="movie-detail">
         <div class="movie-container">
+            <!-- 返回上一步 -->
+            <div class="d-return">
+                
+                <span class="back-text" @click="backText"> <i class="el-icon-arrow-left"></i>返回</span>
+            </div>
+
             <div class="movie-poster">
-                <div class="poster-placeholder"></div>
+                <div class="poster-placeholder">
+                    <img :src="movie.poster" :alt="movie.title" class="poster">
+                </div>
             </div>
 
             <div class="movie-info">
@@ -21,9 +29,20 @@
 
                     <div class="metadata-item">
                         <span class="release-date">
-                            <i class="calendar-icon"></i>
+                            <i class="el-icon-time"></i>
                             {{ movie.releaseDate }}上映
                         </span>
+                    </div>
+                </div>
+
+                <div class="cast-section">
+                    <h2>主创阵容</h2>
+                    <div class="cast-list">
+                        <!-- <div v-for="(actor, index) in castMembers" :key="index" class="cast-member"> -->
+                            <!-- <div class="cast-photo"></div> -->
+                            <!-- <h3>{{ actor.name }}</h3> -->
+                            <p>{{ movie.role }}</p>
+                        <!-- </div> -->
                     </div>
                 </div>
 
@@ -45,22 +64,13 @@
                     </div>
                 </div>
 
-                <div class="cast-section">
-            <h2>主创阵容</h2>
-            <div class="cast-list">
-                <div v-for="(actor, index) in castMembers" :key="index" class="cast-member">
-                    <!-- <div class="cast-photo"></div> -->
-                    <h3>{{ actor.name }}</h3>
-                    <p>{{ actor.role }}</p>
-                </div>
-            </div>
-        </div>
+               
 
 
             </div>
         </div>
 
-       
+
 
         <div class="comments-section">
             <h2>观众评论</h2>
@@ -117,11 +127,11 @@ export default {
                 releaseDate: '',
                 description: '',
                 rating: '',
-                tags: []
+                tags: [],
+                poster: '',
+                role:''
             },
-            castMembers: [],//演员列表
-            newComment: '',
-            userRating: 0,
+           
             comments: [
                 {
                     username: '星辰大海',
@@ -132,6 +142,9 @@ export default {
         }
     },
     methods: {
+        backText(){
+            this.$router.go(-1)
+        },
         setRating(star) {
             this.userRating = star;
         },
@@ -149,48 +162,59 @@ export default {
                 rating: this.userRating,
                 date: formattedDate,
                 content: this.newComment,
-                
+
             });
 
             this.newComment = '';
             this.userRating = 0;
         },
-        
+
     },
 
-    created(){
-        details()
-        .then(res=>{
-            console.log(res);
-            const {status,data}=res
-            if(status==0){
-                this.status=data.map(item=>({
-                    title:item.mv_name,
-                    director:item.director,
-                    actors:item.scenarist,//主演
-                    releaseDate:item.release_date,
-                    description:item.quote,
-                    rating:item.d_rate,
-                    tags:item.mv_type,
-                    castMembers:item.leader,//演员
+    created() {
+        const movieId = String(this.$route.query.id || "1")
+        details(movieId)
+            //！！参数类型string,不能加（{}），会被序列化为对象
+            .then(res => {
+                console.log(res);
+                const { status, data } = res
+                if (status == 0) {
+                    //data并非数组，不能还用map
+                    this.movie = {
+                        title: data.mv_name?.toString() || "暂无标题",
+                        director: data.director?.toString() || "未知导演",
+                        actors: data.scenarist?.split(',') || [],
+                        releaseDate: data.release_date?.toString() || "未知日期",
+                        description: data.quote?.toString() || "暂无简介",
+                        rating: Number(data.d_rate) || 0, // 评分保持数字类型
+                        tags: data.mv_type?.split('/') || [],
+                        poster: data.image_link,
+                        role:data.leader
 
 
-                    //评论区
-                    username:item.user,
-                    date:item.create_time,
-                    content:item.content,
-                    
-                }))
-            }else{
+
+                        //评论区
+                        // username:item.user,
+                        // date:item.create_time,
+                        // content:item.content,
+
+                    }
+                    this.castMembers = data.leader?.map(item => ({
+                        name: item.name?.toString() || "匿名演员",
+                        role: item.role?.toString() || "未知角色"
+                    })) || []
+
+                }
+                //  else {
+                //     console.log(err);
+
+                // }
+
+            })
+            .catch(err => {
                 console.log(err);
-                
-            }
-            
-        })
-        .catch(err=>{
-            console.log(err);
-            
-        })
+
+            })
     }
 
 }
@@ -200,7 +224,7 @@ export default {
 .movie-detail {
     max-width: 100%;
     margin: 0 auto;
-    padding: 50px 10%;
+    padding: 30px 10% 0 1%;
     font-family: 'Arial', sans-serif;
     color: #333;
     background-color: rgb(232, 245, 255);
@@ -210,28 +234,52 @@ export default {
 .movie-container {
     display: flex;
     margin-bottom: 40px;
+    margin-left: 2%;
+    
+}
+
+ .back-text {
+    width: 50px;
+    height: 40px;  
+    margin-right: 50px;
+    display: block;
+}
+
+ .back-text:hover{
+cursor: pointer;
 }
 
 .movie-poster {
     flex: 0 0 300px;
     margin-right: 30px;
+    margin-top: 70px;
+    margin-right: 50px;
 }
 
 .poster-placeholder {
     width: 100%;
     height: 450px;
     background-color: #ccc;
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 10px gray;
+}
+
+.poster-placeholder img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
 }
 
 .movie-info {
     flex: 1;
+    margin-top: 20px;
 }
 
 .movie-title {
     font-size: 28px;
     margin-bottom: 20px;
     text-align: center;
+
 }
 
 .movie-metadata {
@@ -266,6 +314,8 @@ export default {
 
 .movie-description {
     margin-bottom: 20px;
+    font-size: 2.5vh;
+    
 }
 
 .movie-description h3 {
@@ -273,6 +323,7 @@ export default {
     margin-bottom: 10px;
     border-left: 4px solid #4a90e2;
     padding-left: 10px;
+    margin-top: 10px;
 }
 
 .movie-description p {
@@ -317,25 +368,29 @@ export default {
 }
 
 .movie-tags {
-    margin-left: auto;
+    margin-left: 0;
+    margin-top: 5px;
+
 }
 
 .tag {
     display: inline-block;
     padding: 5px 10px;
-    background-color: #f0f0f0;
+    background-color: #f1f1f1;
     border-radius: 4px;
     font-size: 14px;
     margin-right: 8px;
     margin-bottom: 5px;
+    box-shadow: 2px 2px 5px gainsboro;
 }
 
 .cast-section {
-    margin-top: 30px;
-    margin-bottom: 40px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 2.vh;
 }
 
-.cast-section h2{
+.cast-section h2 {
     font-size: 18px;
     margin-bottom: 10px;
     border-left: 4px solid #4a90e2;
@@ -349,7 +404,7 @@ export default {
     position: relative;
 }
 
-.cast-section h2:after,
+/* .cast-section h2:after, */
 .comments-section h2:after {
     content: '';
     display: block;
@@ -511,6 +566,7 @@ export default {
     font-size: 12px;
     margin-left: 10px;
 }
+
 .like-count {
     font-size: 14px;
     margin-right: 5px;
