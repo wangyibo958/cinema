@@ -1,16 +1,16 @@
 <template>
     <div class="layout">
-        
+
         <div class="head">
             <headWeb></headWeb>
         </div>
 
-    
+
         <div class="main">
             <mainWeb></mainWeb>
         </div>
-        
-        
+
+
     </div>
 </template>
 
@@ -21,8 +21,8 @@ import HeadWeb from '@/commpouet/HeadWeb.vue' // 确保路径完全一致
 import mainWeb from './views/mainWeb.vue';
 
 export default {
-    name:"layoutWeb",
-    components:{
+    name: "layoutWeb",
+    components: {
         headWeb,
         mainWeb,
     }
@@ -30,7 +30,7 @@ export default {
 </script>
 
 <style>
-body{
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -38,7 +38,6 @@ body{
     box-sizing: border-box;
     overflow-y: scroll;
     background: #81cde84b;
-    
-}
 
+}
 </style>

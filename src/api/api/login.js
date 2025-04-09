@@ -19,14 +19,14 @@ export function personal() {
     return service({
         url: "/user/user_info/",
         method: "get",
-        
+
     });
 }
 export function order() {
     return service({
         url: "/order/user_orders/",
         method: "get",
-        
+
     });
 }
 export function change(data) {

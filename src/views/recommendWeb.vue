@@ -11,7 +11,7 @@
         <el-button icon="el-icon-search" circle></el-button>
       </div>
     </div>
-    
+
 
     <!-- 推荐部分 -->
     <div class="content">
@@ -19,7 +19,7 @@
       <div class="section">
         <h2 class="section-title">热门推荐</h2>
         <div class="movie-grid">
-          <div v-for="(movie, index) in hotMovies" :key="'hot-'+index" class="movie-card" @click="goTodetails">
+          <div v-for="(movie, index) in hotMovies" :key="'hot-' + index" class="movie-card" @click="goTodetails">
             <div class="movie-poster"></div>
             <div class="movie-info">
               <div class="movie-title">{{ movie.title }}</div>
@@ -35,12 +35,12 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 个性化推荐 -->
       <div class="section">
         <h2 class="section-title">个性化推荐</h2>
         <div class="personalized-movie-grid">
-          <div v-for="(movie, index) in personalizedMovies" :key="'pers-'+index" class="personalized-movie-card">
+          <div v-for="(movie, index) in personalizedMovies" :key="'pers-' + index" class="personalized-movie-card">
             <div class="personalized-movie-poster">
               <!-- <div class="play-button"></div> -->
             </div>
@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 分页 -->
     <!-- <div class="pagination">
      
@@ -127,7 +127,7 @@ export default {
     setPage(page) {
       this.currentPage = page;
     },
-    goTodetails(){
+    goTodetails() {
       this.$router.push('/detailsWeb')
     }
   }
@@ -168,7 +168,7 @@ export default {
 .search-bar {
   flex: 1;
   position: relative;
-  
+
 }
 
 .search-bar input {
@@ -181,7 +181,7 @@ export default {
   border: 1px solid gainsboro;
 }
 
-.search-bar button{
+.search-bar button {
   position: absolute;
   left: 15px;
   top: 50%;
@@ -387,7 +387,7 @@ export default {
   height: 10px;
   border-top: 2px solid rgb(0, 0, 0);
   border-right: 2px solid rgb(93, 93, 93);
- 
+
 }
 
 .prev-page .nav-icon {
@@ -397,4 +397,4 @@ export default {
 .next-page .nav-icon {
   transform: rotate(45deg);
 }
-</style> 
+</style>

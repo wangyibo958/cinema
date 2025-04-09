@@ -1,55 +1,48 @@
 <template>
   <div class="movie-list-page">
     <div class="search-bar">
-      <input type="text" placeholder="搜索电影" v-model="searchQuery">
-      <el-button icon="el-icon-search" circle></el-button>
+      <el-input placeholder="请输入电影名称" prefix-icon="el-icon-search" v-model="search" @change="backall"
+        @keyup.enter.native="searchFunction">
+      </el-input>
+      <div class="search-text">
+        <el-button @click="searchFunction">搜索</el-button>
+      </div>
     </div>
 
     <div class="category-filter">
 
       <!-- 电影类型搜索 -->
       <div class="category-tabs">
-        <div v-for="(category, index) in categories" :key="index"
-          :class="['category-tab', { active: activeCategory === category.value }]" @click="setCategory(category.value)">
-          {{ category.label }}
+        <div v-for="(category, index) in moveType" :key="index" class="category-tab" @click="checkType(index)"
+          :style="{ background: typeIndex == index ? '#79b4f7bf' : '#f5f5f5' }">
+          {{ category }}
         </div>
       </div>
-
 
       <!-- 年份搜索 -->
-      <div class="year-filter">
-        <div class="year-dropdown" @click="toggleYearDropdown">
-          {{ currentYear }}
-          <i class="el-icon-arrow-down"></i>
-        </div>
-        <div class="year-options" v-if="showYearDropdown">
-          <div v-for="(year, index) in yearOptions" :key="index" class="year-option" @click="selectYear(year)">
-            {{ year }}
-          </div>
-        </div>
-      </div>
+
     </div>
 
 
     <!-- 电影板块 -->
-    <div class="movies-grid">
-      <div v-for="(movie, index) in filteredMovies" :key="index" class="movie-card" @click="goToMovieDetail(movie.id)">
-        <div class="movie-poster"> <img :src="movie.poster" :alt="movie.title" class="poster"
-          :style="{ transform: hoverEffect === movie.id ? 'scale(1.05)' : 'none' }"></div>
-        <h3 class="movie-title">{{ movie.title }}</h3>
-        <div class="movie-rating">
-          <div class="rating-stars">
-            <span v-for="n in 5" :key="n" class="star" :class="{ 'filled': n <= Math.round(movie.rating) }"></span>
-            <span class="rating-score">{{ movie.rating }}</span>
+    <div class="movie-container">
+      <div class="movie-grid">
+        <div v-for="(movie, index) in moviesListCopy" :key="index" class="movie-card"
+          @mouseover="hoverEffect = movie.movie_id" @mouseleave="hoverEffect = null">
+          <!-- 携带路径id -->
+          <div class="poster-wrapper">
+            <img :src="movie.image_link" :alt="movie.mv_name" class="poster"
+              :style="{ transform: hoverEffect === movie.movie_id ? 'scale(1.05)' : 'none' }">
+            <div class="rating-badge">{{ movie.mv_type }}</div>
           </div>
-
+          <h3 class="movie-title">{{ movie.mv_name }}</h3>
         </div>
       </div>
     </div>
 
 
     <!-- Page -->
-    <div class="pagination">
+    <!-- <div class="pagination">
       <div class="page-nav prev" @click="prevPage" :class="{ disabled: currentPage === 1 }">
         <i class="arrow-icon left"></i>
       </div>
@@ -60,153 +53,159 @@
       <div class="page-nav next" @click="nextPage" :class="{ disabled: currentPage === totalPages }">
         <i class="arrow-icon right"></i>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 
-import { movies_choose } from '@/api/api/movies';
+import { movies, movies_choose } from '@/api/api/movies';
 export default {
   name: 'MovieList',
   data() {
     return {
-      // searchQuery: '',
-      // activeCategory: 'all',
-      // currentYear: '全部年份',
-      // showYearDropdown: false,
-      // currentPage: 1,
-      // totalPages: 5,
-      // categories: [
-      //   { label: '全部', value: 'all' },
-      //   { label: '动作', value: 'action' },
-      //   { label: '喜剧', value: 'comedy' },
-      //   { label: '科幻', value: 'sci_fi' },
-      //   { label: '爱情', value: 'romance' },
-      //   { label: '动画', value: 'animation' },
-      //   { label: '悬疑', value: 'suspense' },
-      //   { label: '恐怖', value: 'horror' }
-      // ],
-      // yearOptions: ['全部年份', '2024', '2023', '2022', '2021', '2020', '2019', '更早'],
-      movies: [
-        // { id: 1, title: '星际穿越：未知的边界', rating: 4.8, category: 'sci-fi', year: '2023' },
-        // { id: 2, title: '海底世界：深海探险', rating: 4.5, category: 'action', year: '2024' },
-        // { id: 3, title: '时光旅人：未来纪元', rating: 4.7, category: 'sci-fi', year: '2023' },
-        // { id: 4, title: '龙族传说：东方神话', rating: 4.6, category: 'animation', year: '2024' },
-        // { id: 5, title: '心灵迷宫：记忆追踪', rating: 4.9, category: 'suspense', year: '2022' },
-        // { id: 6, title: '未来战士：机械觉醒', rating: 4.4, category: 'action', year: '2023' },
-        // { id: 7, title: '奇幻森林：魔法之源', rating: 4.3, category: 'animation', year: '2024' },
-        // { id: 8, title: '都市传说：平行空间', rating: 4.7, category: 'sci-fi', year: '2022' }
-      ]
+      moviesList: [],
+      moviesListCopy: [],
+      moveType: ['全部', '剧情', '犯罪', '喜剧', '动画', '奇幻', '爱情', '同性', '动作', '科幻', '冒险', '悬疑', '历史', '战争'],
+      typeIndex: 0,
+      search: ""
     }
   },
-  // computed: {
-  //   filteredMovies() {
-  //     let result = this.movies;
-
-  //     // 搜索过滤
-  //     if (this.searchQuery) {
-  //       const query = this.searchQuery.toLowerCase();
-  //       result = result.filter(movie => movie.title.toLowerCase().includes(query));
-  //     }
-
-  //     // 分类过滤
-  //     if (this.activeCategory !== 'all') {
-  //       result = result.filter(movie => movie.category === this.activeCategory);
-  //     }
-
-  //     // 年份过滤
-  //     if (this.currentYear !== '全部年份') {
-  //       result = result.filter(movie => movie.year === this.currentYear);
-  //     }
-
-  //     return result;
-  //   },
-  //   visiblePages() {
-  //     const pages = [];
-  //     let startPage = Math.max(1, this.currentPage - 2);
-  //     let endPage = Math.min(this.totalPages, startPage + 4);
-
-  //     if (endPage - startPage < 4) {
-  //       startPage = Math.max(1, endPage - 4);
-  //     }
-
-  //     for (let i = startPage; i <= endPage; i++) {
-  //       pages.push(i);
-  //     }
-
-  //     return pages;
-  //   }
-  // },
   methods: {
-    // setCategory(category) {
-    //   this.activeCategory = category;
-    //   this.currentPage = 1;
-    // },
-    // toggleYearDropdown() {
-    //   this.showYearDropdown = !this.showYearDropdown;
-    // },
-    // selectYear(year) {
-    //   this.currentYear = year;
-    //   this.showYearDropdown = false;
-    //   this.currentPage = 1;
-    // },
-    // goToMovieDetail(movieId) {
-    //   // 在实际应用中，这里会导航到电影详情页
-    //   console.log('跳转到电影详情页，ID：', movieId);
-    //   this.$router.push('/detailsWeb')
-    // },
-    // goToPage(page) {
-    //   this.currentPage = page;
-    // },
-    // prevPage() {
-    //   if (this.currentPage > 1) {
-    //     this.currentPage--;
-    //   }
-    // },
-    // nextPage() {
-    //   if (this.currentPage < this.totalPages) {
-    //     this.currentPage++;
-    //   }
-    // }
+    //获取所有电影列表
+    getMoviesList() {
+      movies()
+        .then(res => {
+          const { status, data } = res
+          if (status == 0) {
+            this.moviesList = []
+            this.moviesListCopy = []
+            data.forEach(item => {
+              this.moviesList.push(item)
+              this.moviesListCopy.push(item)
+            })
+
+          } else {
+            this.$message.error(res.msg || '电影列表获取失败')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    checkType(index) {
+      this.typeIndex = index
+      if (index == 0) {
+        this.getMoviesList()
+      } else {
+        const type = this.moveType[index]
+        movies_choose(type)
+          .then(res => {
+            const { status, data } = res
+            if (status == 0) {
+              this.moviesList = []
+              this.moviesListCopy = []
+              data.forEach(item => {
+                this.moviesList.push(item)
+                this.moviesListCopy.push(item)
+              })
+
+            } else {
+              this.$message.error(res.msg || '电影类型列表获取失败')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    },
+    searchFunction() {
+      if (this.search == "") return
+      const keyword = this.search.trim()
+        .toLowerCase()
+      this.moviesListCopy = []
+      this.moviesList.forEach(movie => {
+        const movieName = movie.mv_name?.toLowerCase() || ''
+        if (movieName.includes(keyword)) {
+          this.moviesListCopy.push(movie)
+        }
+      })
+    },
+    backall() {
+      if (this.search == "") {
+        this.moviesListCopy = []
+        this.moviesList.forEach(item => {
+          this.moviesListCopy.push(item)
+        })
+      }
+    }
   },
 
   created() {
-    movies_choose()
-      .then(res => {
-        console.log(res);
-        const { status, data } = res
-        if (status == 0) {
-          this.movies = data.map(item => ({
-            title: item.mv_name,
-            rating: item.d_rate,
-            year: item.release_date,
-            category: item.mv_type,
-            poster:item.image_link
-
-
-          }))
-          //每页最多20页
-          this.totalPages=Math.ceil(this.movies.length/20)
-
-        }else{
-          console.log(err);
-          
-        }
-
-
-      })
-      .catch(err => {
-        console.log(err);
-
-
-      })
+    this.getMoviesList()
   }
 
 }
 </script>
 
 <style scoped>
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 30px;
+  padding: 20px;
+}
+
+.movie-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+}
+
+.poster-wrapper {
+  position: relative;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.rating-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+
+}
+
+.movie-title {
+  margin: 15px;
+  font-size: 18px;
+  text-align: center;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+
+}
+
 .movie-list-page {
   max-width: 100%;
   margin: 0 auto;
@@ -218,8 +217,14 @@ export default {
 }
 
 .search-bar {
-  position: relative;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.search-text {
+  width: 100px;
+  height: 40px;
 }
 
 input {
@@ -229,17 +234,6 @@ input {
   border-radius: 30px;
   font-size: 16px;
   outline: none;
-}
-
-.search-bar .el-button {
-  position: absolute;
-  top: 20px;
-  left: 15px;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  background-color: #ffffff;
-  border-radius: 50%;
 }
 
 input {

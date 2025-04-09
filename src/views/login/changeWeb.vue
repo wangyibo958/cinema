@@ -78,10 +78,10 @@ export default {
                             // this.password = data.old_passwore
                             // this.newPassword = data.new_password
                             // this.phonenum = data.phone
-                            
-                                removeToken()
-                                this.$message.success('修改成功！请重新登录');
-                                this.$router.push('/loginLogin');
+
+                            removeToken()
+                            this.$message.success('修改成功！请重新登录');
+                            this.$router.push('/loginLogin');
                         } else {
                             this.$message.error(res.msg)
                         }

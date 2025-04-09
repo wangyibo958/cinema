@@ -1,4 +1,3 @@
-// config.js
 import axios from 'axios'
 import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -37,7 +36,7 @@ const createService = (baseURL = '/api') => {
 
 
 
-  
+
 
 
 
@@ -60,11 +59,11 @@ const createService = (baseURL = '/api') => {
    */
   const handleResponse = (response) => {
     const { status, data } = response
-    
+
     // 处理特殊状态码
     if ([200, 201, 204].includes(status)) {
-      
-      return  data
+
+      return data
     }
 
     const errorMsg = data?.message || data?.msg || `请求异常 [${status}]`

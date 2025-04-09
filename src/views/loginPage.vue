@@ -6,7 +6,7 @@
         </div>
 
         <div class="login-box">
-            <div class="immg"> 
+            <div class="immg">
                 <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
             </div>
             <div class="login-contral">
@@ -19,7 +19,7 @@
                         @click="handleLoginClick(item.path)"
                     >{{ item.title }}</el-button>
                 </div> -->
-                <div class="register"> 
+                <div class="register">
                     <el-button @click="goToLogin">登录</el-button>
                     <el-button @click="goToRegister">注册</el-button>
                 </div>
@@ -32,19 +32,18 @@
 
 <script>
 export default {
-methods:{
-    goToLogin(){
-        this.$router.push('/loginLogin');
-    },
-    goToRegister(){
-        this.$router.push('/loginRegister');
+    methods: {
+        goToLogin() {
+            this.$router.push('/loginLogin');
+        },
+        goToRegister() {
+            this.$router.push('/loginRegister');
+        }
     }
-}
 }
 </script>
 
 <style>
-
 .login-web {
     width: 100%;
     background-color: rgb(232, 245, 255);
@@ -55,47 +54,53 @@ methods:{
     flex-direction: column;
     align-items: center;
 }
-.login-logo{
+
+.login-logo {
     display: flex;
     flex-direction: row;
     justify-content: center;
     width: 20%;
     /* background-color: aquamarine; */
 }
-.logo-tit{
+
+.logo-tit {
     font-size: 6vh;
     font-weight: bolder;
     margin-top: 23%;
     text-shadow: 2px 4px rgba(255, 89, 0, 0.552);
     color: rgb(255, 255, 255);
 }
-.login-logo img{
+
+.login-logo img {
     /* margin-left: -20%; */
     width: 80%;
 }
-.login-box{
+
+.login-box {
     width: 50%;
     height: 400px;
     margin-top: 2%;
-    background-color:white;
+    background-color: white;
     display: flex;
     flex-direction: column;
     box-shadow: 4px 4px 4px 4px rgba(128, 128, 128, 0.595);
     border-radius: 4px;
     align-items: center;
 }
-.immg{
+
+.immg {
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin-top: 9%;
 }
 
-.immg .el-avatar{
+.immg .el-avatar {
     width: 200px;
     height: 200px;
 }
-.register{
+
+.register {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -103,15 +108,16 @@ methods:{
     margin-top: 4%;
 }
 
-.login-contral .el-button{
+.login-contral .el-button {
     height: 50px;
     width: 150px;
     font-size: 2vh;
-    color: white; 
-    background-color: #007bffa8; 
+    color: white;
+    background-color: #007bffa8;
 }
-.login-contral .el-button:hover{
+
+.login-contral .el-button:hover {
     color: #53cefff4;
     background-color: white;
 }
-</style>    
+</style>

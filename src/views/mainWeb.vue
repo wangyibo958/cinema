@@ -63,7 +63,7 @@
       </div>
     </div> -->
     </div>
-    
+
   </div>
 </template>
 <script>
@@ -110,20 +110,20 @@ export default {
           this.movies = data.map(item => ({
             id: item.movie_id,
             title: item.mv_name,
-            rating:item.mv_type,
-            poster:item.image_link,
+            rating: item.mv_type,
+            poster: item.image_link,
           }))
-          
-// // 在created回调中添加调试代码
-// setTimeout(() => {
-//   console.log('首图地址:', this.movies[0]?.poster)
-//   console.log('首图DOM:', document.querySelector('.poster')?.src)
-// }, 1000)
+
+          // // 在created回调中添加调试代码
+          // setTimeout(() => {
+          //   console.log('首图地址:', this.movies[0]?.poster)
+          //   console.log('首图DOM:', document.querySelector('.poster')?.src)
+          // }, 1000)
 
 
 
         } else {
-        console.error('接口返回错误:', res.msg)
+          console.error('接口返回错误:', res.msg)
           this.$message.error(res.msg || '数据加载失败')
 
         }
@@ -270,7 +270,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
+
 
 }
 

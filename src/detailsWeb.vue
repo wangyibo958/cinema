@@ -3,7 +3,7 @@
         <div class="movie-container">
             <!-- 返回上一步 -->
             <div class="d-return">
-                
+
                 <span class="back-text" @click="backText"> <i class="el-icon-arrow-left"></i>返回</span>
             </div>
 
@@ -39,9 +39,9 @@
                     <h2>主创阵容</h2>
                     <div class="cast-list">
                         <!-- <div v-for="(actor, index) in castMembers" :key="index" class="cast-member"> -->
-                            <!-- <div class="cast-photo"></div> -->
-                            <!-- <h3>{{ actor.name }}</h3> -->
-                            <p>{{ movie.role }}</p>
+                        <!-- <div class="cast-photo"></div> -->
+                        <!-- <h3>{{ actor.name }}</h3> -->
+                        <p>{{ movie.role }}</p>
                         <!-- </div> -->
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-               
+
 
 
             </div>
@@ -129,9 +129,9 @@ export default {
                 rating: '',
                 tags: [],
                 poster: '',
-                role:''
+                role: ''
             },
-           
+
             comments: [
                 {
                     username: '星辰大海',
@@ -142,7 +142,7 @@ export default {
         }
     },
     methods: {
-        backText(){
+        backText() {
             this.$router.go(-1)
         },
         setRating(star) {
@@ -189,7 +189,7 @@ export default {
                         rating: Number(data.d_rate) || 0, // 评分保持数字类型
                         tags: data.mv_type?.split('/') || [],
                         poster: data.image_link,
-                        role:data.leader
+                        role: data.leader
 
 
 
@@ -235,18 +235,18 @@ export default {
     display: flex;
     margin-bottom: 40px;
     margin-left: 2%;
-    
+
 }
 
- .back-text {
+.back-text {
     width: 50px;
-    height: 40px;  
+    height: 40px;
     margin-right: 50px;
     display: block;
 }
 
- .back-text:hover{
-cursor: pointer;
+.back-text:hover {
+    cursor: pointer;
 }
 
 .movie-poster {
@@ -315,7 +315,7 @@ cursor: pointer;
 .movie-description {
     margin-bottom: 20px;
     font-size: 2.5vh;
-    
+
 }
 
 .movie-description h3 {

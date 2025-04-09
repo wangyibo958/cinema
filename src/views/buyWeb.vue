@@ -24,7 +24,7 @@
         <li class="smallBox redBox">售出座位</li>
         <li class="smallBox emptyBox">空座位</li>
       </ul>
-      
+
       <!-- 座位布局 -->
       <div class="seatStructure txt-center" style="overflow-x:auto;">
         <p id="notification">{{ notification }}</p>
@@ -61,7 +61,7 @@
             <td><textarea :value="displaySeats"></textarea></td>
           </tr>
         </table>
-       
+
       </div>
       <button @click="sendOrder" class="sendorder">提交订单</button>
     </div>
@@ -90,9 +90,9 @@ export default {
     }
   },
   methods: {
-    sendOrder(){
+    sendOrder() {
       this.$router.push('/cinemaWeb'),
-      this.$message.success('购票成功！')
+        this.$message.success('购票成功！')
     },
     generateSeatMap() {
       const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
@@ -167,7 +167,8 @@ nav,
 section {
   display: block;
 }
-.sendorder{
+
+.sendorder {
   margin-top: 5%;
   margin-left: 40%;
 }
@@ -677,7 +678,7 @@ input[type=checkbox]:checked:before {
 
   .w3ls-reg {
     width: 280px;
-   
+
   }
 
   input[type="text"],

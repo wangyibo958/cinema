@@ -1,5 +1,5 @@
 //设置token
-export function setToken( token) {
+export function setToken(token) {
     return localStorage.setItem('token', token)
 }
 //存储token

@@ -16,11 +16,11 @@
         <button type="submit" class="search-btn"><i class="el-icon-search"></i></button>
       </div>
       <!-- 头像容器 -->
-      <div class="hand" @mouseenter="flag=1" @mouseleave="flag=0" @click="goTologinPage">
+      <div class="hand" @mouseenter="flag = 1" @mouseleave="flag = 0" @click="goTologinPage">
         <img src="../assets/白底头像.jpg" alt="用户头像">
         <!-- 下拉菜单（独立定位） -->
       </div>
-      <div v-show="flag == 1" class="dropdown-menu" @mouseenter="flag=1" @mouseleave="flag=0">
+      <div v-show="flag == 1" class="dropdown-menu" @mouseenter="flag = 1" @mouseleave="flag = 0">
         <div class="menu-item" @click="handleMenuClick">基本信息</div>
         <div class="menu-item" @click="handleMenuClick">历史订单</div>
         <div class="menu-item" @click="returnClick">退出登录</div>
@@ -75,10 +75,10 @@ export default {
       }
       this.showMenu = false
     },
-    goTologinPage(){
+    goTologinPage() {
       this.$router.push('/loginPage');
     },
-    returnClick(){
+    returnClick() {
       this.$message.success('用户已成功退出')
     }
   }
@@ -182,27 +182,33 @@ export default {
   z-index: 1001;
   transition: opacity 0.2s, transform 0.2s;
 
-/* 三角伪元素 */
-  &::before {
-    content: '';
-    position: absolute;
-    left: 20px; /* 调整三角水平位置 */
-    top: -10px; /* 移动到菜单上方 */
-    border: 5px solid transparent;
-    border-bottom-color: #fff; /* 匹配菜单背景色 */
-    filter: drop-shadow(0 -2px 1px rgba(0,0,0,0.1)); /* 添加阴影 */
-  }
-  &::after {
-    content: '';
-    position: absolute;
-    left: 21px; /* 微调边框位置 */
-    top: -11px;
-    border: 6px solid transparent;
-    border-bottom-color: #ccc; /* 匹配菜单边框色 */
-    z-index: -1;
-  }
 }
 
+.dropdown-menu ::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  /* 调整三角水平位置 */
+  top: -10px;
+  /* 移动到菜单上方 */
+  border: 5px solid transparent;
+  border-bottom-color: #fff;
+  /* 匹配菜单背景色 */
+  filter: drop-shadow(0 -2px 1px rgba(0, 0, 0, 0.1));
+  /* 添加阴影 */
+}
+
+.dropdown-menu::after {
+  content: '';
+  position: absolute;
+  left: 21px;
+  /* 微调边框位置 */
+  top: -11px;
+  border: 6px solid transparent;
+  border-bottom-color: #ccc;
+  /* 匹配菜单边框色 */
+  z-index: -1;
+}
 
 /* 菜单动画效果 */
 .dropdown-menu[show] {

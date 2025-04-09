@@ -103,7 +103,7 @@
                 </div>
                 <!-- 写评价区域 -->
 
-                 <!-- 模版分组渲染v-if -->
+                <!-- 模版分组渲染v-if -->
                 <div class="write-review-section" v-if="cinema.showWriteReview">
                     <h3>撰写您的评价</h3>
                     <div class="rating-input">
@@ -121,7 +121,7 @@
                     </div>
                     <div class="review-submit">
                         <!-- 点击时触发提交方法，并传递影院索引 -->
-                        <button class="submit-btn" @click="submitReview(cinemaIndex)"  
+                        <button class="submit-btn" @click="submitReview(cinemaIndex)"
                             :disabled="!isReviewValid(cinemaIndex)">
                             {{ submitting ? '提交中...' : '提交评价' }}
                         </button>
@@ -659,7 +659,7 @@ export default {
     padding: 10px;
     font-size: 14px;
     resize: vertical;
-    
+
 }
 
 .review-submit {

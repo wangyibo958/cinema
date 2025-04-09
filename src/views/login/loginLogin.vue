@@ -50,7 +50,7 @@ export default {
                         if (status == 0) {
                             const token = 'Bearer' + ' ' + data.access_token
                             setToken(token)
-                            localStorage.setItem('refreshToken',data.refresh_token)
+                            localStorage.setItem('refreshToken', data.refresh_token)
                             this.$message.success('登陆成功');
                             this.$router.push('/personalHub');
                         } else {

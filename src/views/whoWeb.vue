@@ -4,9 +4,12 @@
         <div class="change-box">
             <div class="change-input">
                 <div class="change-name">用户名：<el-input placeholder="请输用户名" v-model="input" clearable></el-input></div>
-                <div class="change-name">旧密码：<el-input placeholder="请输入旧密码" v-model="oldpassword" show-password @input="logInput('oldpassword')"></el-input></div>
-                <div class="change-name">新密码：<el-input placeholder="请输入新密码" v-model="newpassword" show-password @input="logInput('newpassword')"></el-input></div>
-                <div class="change-name">电话：<el-input placeholder="请输入电话号码" v-model="phonenum" clearable></el-input></div>
+                <div class="change-name">旧密码：<el-input placeholder="请输入旧密码" v-model="oldpassword" show-password
+                        @input="logInput('oldpassword')"></el-input></div>
+                <div class="change-name">新密码：<el-input placeholder="请输入新密码" v-model="newpassword" show-password
+                        @input="logInput('newpassword')"></el-input></div>
+                <div class="change-name">电话：<el-input placeholder="请输入电话号码" v-model="phonenum" clearable></el-input>
+                </div>
                 <div class="change-over"><el-button type="primary" @click="handleLogin" plain>修改完成</el-button></div>
             </div>
         </div>
@@ -97,4 +100,4 @@ export default {
 .change-over .el-button {
     width: 30%;
 }
-</style>    
+</style>

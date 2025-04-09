@@ -17,9 +17,9 @@ const routes = [
       { path: 'whoWeb', name: 'WhoWeb', component: () => import('@/views/whoWeb.vue') },
       { path: 'changeWeb', name: 'ChangeWeb', component: () => import('@/views/login/changeWeb.vue') },
       { path: 'loginPage', name: 'loginPage', component: () => import('@/views/loginPage.vue') },
-  
+
       { path: 'detailsWeb', name: 'DetailsWeb', component: () => import('@/detailsWeb.vue') },
-      
+
       {
         path: 'loginlogin',
         name: 'LoginLogin',
@@ -35,9 +35,6 @@ const routes = [
         name: 'PersonalHub',
         component: () => import('@/views/login/personalHub.vue'),
       },
-      
-     
-      
     ]
   }
 ]
