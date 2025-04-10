@@ -208,7 +208,6 @@ export default {
   padding: 5px 10px;
   border-radius: 20px;
   font-size: 10px;
-
 }
 
 .movie-title {

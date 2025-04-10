@@ -20,7 +20,9 @@
         <h2 class="section-title">热门推荐</h2>
         <div class="movie-grid">
           <div v-for="(movie, index) in hotMovies" :key="'hot-' + index" class="movie-card" @click="goTodetails">
-            <div class="movie-poster"></div>
+            <div class="movie-poster">
+              <img :src="movie.img" alt="" style="width: 100%;height: 100%;">
+            </div>
             <div class="movie-info">
               <div class="movie-title">{{ movie.title }}</div>
               <div class="movie-rating">
@@ -42,7 +44,7 @@
         <div class="personalized-movie-grid">
           <div v-for="(movie, index) in personalizedMovies" :key="'pers-' + index" class="personalized-movie-card">
             <div class="personalized-movie-poster">
-              <!-- <div class="play-button"></div> -->
+              <img :src="movie.img" alt="" style="width: 100%;height: 100%;">
             </div>
             <div class="personalized-movie-info">
               <div class="personalized-movie-title">{{ movie.title }}</div>
@@ -76,51 +78,14 @@
 </template>
 
 <script>
+import { getHot, getPerson } from '@/api/api/recomm'
 export default {
   name: 'MovieRecommendation',
   data() {
     return {
       currentPage: 1,
-      hotMovies: [
-        {
-          title: '流浪地球 3',
-          score: '9.2',
-          tags: ['科幻', '冒险']
-        },
-        {
-          title: '热辣滚烫',
-          score: '8.8',
-          tags: ['喜剧', '音乐']
-        },
-        {
-          title: '三大队',
-          score: '8.9',
-          tags: ['动作', '犯罪']
-        },
-        {
-          title: '年会不能停',
-          score: '8.5',
-          tags: ['喜剧', '剧情']
-        }
-      ],
-      personalizedMovies: [
-        {
-          title: '封神第一部：朝歌风云',
-          actors: '黄渤，李雪健，黄磊'
-        },
-        {
-          title: '消失的她',
-          actors: '朱一龙，倪妮，文咏珊'
-        },
-        {
-          title: '超能一家人',
-          actors: '艾伦，沈腾，陶虹'
-        },
-        {
-          title: '金刚川',
-          actors: '吴京，张译，李九霄'
-        }
-      ]
+      hotMovies: [],
+      personalizedMovies: []
     }
   },
   methods: {
@@ -129,7 +94,58 @@ export default {
     },
     goTodetails() {
       this.$router.push('/detailsWeb')
+    },
+    getHotMovie() {
+      getHot()
+        .then(res => {
+          const { status, data } = res
+          if (status == 0) {
+            this.hotMovies = []
+            data.forEach(element => {
+              this.hotMovies.push({
+                title: element.mv_name,
+                score: element.d_rate,
+                tags: element.mv_type.split(',')
+                  .map(item => item.trim()),
+                img: element.image_link
+              })
+            });
+          } else {
+            this.$message.error(res.error || '热门电影获取失败')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    getPersonMovie(id) {
+      getPerson(id)
+        .then(res => {
+          const { status, data } = res
+          if (status == 0) {
+            this.personalizedMovies = []
+
+            data.forEach(element => {
+              this.personalizedMovies.push({
+                title: element.mv_name,
+                actors: element.leader,
+                img: element.image_link
+              })
+            });
+          } else {
+            this.$message.error(res.error || '个性电影获取失败')
+          }
+
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
+  },
+  created() {
+    this.getHotMovie()
+    const id = localStorage.getItem('id')
+    this.getPersonMovie(id)
   }
 }
 </script>

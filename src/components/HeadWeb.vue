@@ -17,7 +17,7 @@
       </div>
       <!-- 头像容器 -->
       <div class="hand" @mouseenter="flag = 1" @mouseleave="flag = 0" @click="goTologinPage">
-        <img src="../assets/白底头像.jpg" alt="用户头像">
+        <img :src="avatarSrc" alt="用户头像">
         <!-- 下拉菜单（独立定位） -->
       </div>
       <div v-show="flag == 1" class="dropdown-menu" @mouseenter="flag = 1" @mouseleave="flag = 0">
@@ -33,18 +33,30 @@
   </div>
 </template>
 <script>
+import { EventBus } from '@/utils/eventBus'
+import { getToken, removeToken } from '@/utils/setToken'
+import img1 from '../assets/白底头像.jpg'
+import img2 from '../assets/delicious.jpg'
 export default {
   data() {
     return {
       showMenu: false,
       menuTimer: null,
       flag: 0,
+      img1: img1,
+      img2: img2,
+      dynamicToken: getToken(),
       navItems: [
         { title: '首页', path: '/' },
         { title: '影片', path: '/moviesWeb' },
         { title: '影院', path: '/cinemaWeb' },
         { title: '推荐', path: '/recommendWeb' }
       ]
+    }
+  },
+  computed: {
+    avatarSrc() {
+      return this.dynamicToken ? this.img2 : this.img1;
     }
   },
   methods: {
@@ -69,20 +81,30 @@ export default {
     },
 
     handleMenuClick() {
-      // 示例：退出登录处理
-      if (this.$route.path !== '/loginWeb') {
-        this.$router.push('/loginWeb')
+      if (!getToken()) {
+        this.$message.error('请先登录')
+        this.$router.push('/loginPage')
+        return
       }
-      this.showMenu = false
+      this.$router.push('/personalHub')
     },
     goTologinPage() {
       this.$router.push('/loginPage');
     },
     returnClick() {
+      removeToken()
+      EventBus.$emit('token-changed', null)
       this.$message.success('用户已成功退出')
     }
+  },
+  created() {
+    EventBus.$on('token-changed', (newToken) => {
+      this.dynamicToken = newToken;
+    });
+  },
+  beforeDestroy() {
+    EventBus.$off('token-changed');
   }
-
 }
 </script>
 
@@ -187,7 +209,7 @@ export default {
 .dropdown-menu ::before {
   content: '';
   position: absolute;
-  left: 20px;
+  left: 55px;
   /* 调整三角水平位置 */
   top: -10px;
   /* 移动到菜单上方 */
@@ -201,7 +223,7 @@ export default {
 .dropdown-menu::after {
   content: '';
   position: absolute;
-  left: 21px;
+  left: 55px;
   /* 微调边框位置 */
   top: -11px;
   border: 6px solid transparent;

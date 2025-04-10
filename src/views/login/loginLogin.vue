@@ -25,6 +25,7 @@
 <script>
 import { login } from '@/api/api/login';
 import { setToken } from '@/utils/setToken';
+import { EventBus } from '@/utils/eventBus'
 export default {
     data() {
         return {
@@ -50,9 +51,10 @@ export default {
                         if (status == 0) {
                             const token = 'Bearer' + ' ' + data.access_token
                             setToken(token)
-                            localStorage.setItem('refreshToken', data.refresh_token)
+                            localStorage.setItem('id', data.id)
                             this.$message.success('登陆成功');
                             this.$router.push('/personalHub');
+                            EventBus.$emit('token-changed', token);
                         } else {
                             this.$message.error(res.msg)
                         }

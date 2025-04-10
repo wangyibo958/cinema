@@ -35,7 +35,7 @@
     <div class="movie-container">
       <div class="movie-grid">
         <div v-for="(movie, index) in movies" :key="index" class="movie-card" @mouseover="hoverEffect = movie.id"
-          @mouseleave="hoverEffect = null" @click="goTodetails(movie.id,movie.name)">
+          @mouseleave="hoverEffect = null" @click="goTodetails(movie.id, movie.name)">
           <!-- 携带路径id -->
           <div class="poster-wrapper">
             <img :src="movie.poster" :alt="movie.title" class="poster"
@@ -50,18 +50,9 @@
 
     <!-- 底部翻页 -->
     <div class="btm">
-      <!-- <div class="p-pagination">
-      <div class="p-page-nav prev" @click="prevPage" :class="{ disabled: currentPage === 1 }">
-        <i class="p-arrow-icon left"></i>
-      </div>
-      <div v-for="page in visiblePages" :key="page" class="p-page-number" :class="{ active: currentPage === page }"
-        @click="goToPage(page)">
-        {{ page }}
-      </div>
-      <div class="p-page-nav next" @click="nextPage" :class="{ disabled: currentPage === totalPages }">
-        <i class="p-arrow-icon right"></i>
-      </div>
-    </div> -->
+      <el-pagination background layout="prev, pager, next" :total="total" :page-size="10" @current-change="onChange"
+        @prev-click="onChange" @next-click="onChange">
+      </el-pagination>
     </div>
 
   </div>
@@ -79,72 +70,54 @@ export default {
         }
       ],
       movies: [],
+      total: 0,
+      page: 1,
       classicMovies: []
     }
   },
 
   methods: {
-
-
-
     allClick() {
-
-
       this.$router.push('/moviesWeb')
     },
-    goTodetails(id,name) {
+    goTodetails(id, name) {
       this.$router.push({
-        path:'/detailsWeeb',
-        query:{
-          id:id,
-          name:name
+        path: '/detailsWeeb',
+        query: {
+          id: id,
+          name: name
         }
       })
-    }
-
+    },
+    onChange(e) {
+      this.page = e
+      this.getMoviesList(this.page)
+    },
+    //获取所有电影列表
+    getMoviesList(page) {
+      movies(page)
+        .then(res => {
+          const { status, data, pagination } = res
+          if (status == 0) {
+            this.movies = data.map(item => ({
+              id: item.movie_id,
+              title: item.mv_name,
+              rating: item.mv_type,
+              poster: item.image_link,
+            }))
+            this.total = pagination.total_pages * 10
+          } else {
+            this.$message.error(res.msg || '电影列表获取失败')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
   },
 
-
   created() {
-    this.loading = true
-    movies()
-      .then(res => {
-        console.log('完整响应', res)
-        const response = res
-        const { status, data } = response
-        if (status == 0) {
-          this.movies = data.map(item => ({
-            id: item.movie_id,
-            title: item.mv_name,
-            rating: item.mv_type,
-            poster: item.image_link,
-          }))
-
-          // // 在created回调中添加调试代码
-          // setTimeout(() => {
-          //   console.log('首图地址:', this.movies[0]?.poster)
-          //   console.log('首图DOM:', document.querySelector('.poster')?.src)
-          // }, 1000)
-
-
-
-        } else {
-          console.error('接口返回错误:', res.msg)
-          this.$message.error(res.msg || '数据加载失败')
-
-        }
-      })
-
-      .catch(err => {
-        console.log(err);
-
-      })
-
-
-      .finally(() => {
-        this.loading = false
-      })
-
+    this.getMoviesList()
   }
 }
 
@@ -176,10 +149,8 @@ body {
 }
 
 .btm {
-  width: 80%;
-  margin-left: 10%;
-  background-color: rgb(232, 245, 255);
-  height: 90px;
+  width: fit-content;
+  margin: 10px auto;
 }
 
 .ing {
