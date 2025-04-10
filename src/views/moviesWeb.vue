@@ -1,8 +1,8 @@
 <template>
   <div class="movie-list-page">
     <div class="search-bar">
-      <el-input placeholder="请输入电影名称" prefix-icon="el-icon-search" v-model="search" @change="backall"
-        @keyup.enter.native="searchFunction">
+      <el-input placeholder="请输入电影名称" clearable prefix-icon="el-icon-search" v-model="search" @change="backall"
+        @blur="backall" @keyup.enter.native="searchFunction">
       </el-input>
       <div class="search-text">
         <el-button @click="searchFunction">搜索</el-button>
@@ -12,7 +12,7 @@
     <div class="category-filter">
 
       <!-- 电影类型搜索 -->
-      <div class="category-tabs">
+      <div class="category-tabs" v-show="!searchFlag">
         <div v-for="(category, index) in moveType" :key="index" class="category-tab" @click="checkType(index)"
           :style="{ background: typeIndex == index ? '#79b4f7bf' : '#f5f5f5' }">
           {{ category }}
@@ -28,7 +28,8 @@
     <div class="movie-container">
       <div class="movie-grid">
         <div v-for="(movie, index) in moviesListCopy" :key="index" class="movie-card"
-          @mouseover="hoverEffect = movie.movie_id" @mouseleave="hoverEffect = null"  @click="goTodetails(movie.movie_id)">
+          @mouseover="hoverEffect = movie.movie_id" @mouseleave="hoverEffect = null"
+          @click="goTodetails(movie.movie_id)">
           <!-- 在最小卡片里面渲染 -->
           <!-- 携带路径id -->
           <div class="poster-wrapper">
@@ -41,26 +42,17 @@
       </div>
     </div>
 
-
-    <!-- Page -->
-    <!-- <div class="pagination">
-      <div class="page-nav prev" @click="prevPage" :class="{ disabled: currentPage === 1 }">
-        <i class="arrow-icon left"></i>
-      </div>
-      <div v-for="page in visiblePages" :key="page" class="page-number" :class="{ active: currentPage === page }"
-        @click="goToPage(page)">
-        {{ page }}
-      </div>
-      <div class="page-nav next" @click="nextPage" :class="{ disabled: currentPage === totalPages }">
-        <i class="arrow-icon right"></i>
-      </div>
-    </div> -->
+    <div class="page" v-show="!searchFlag">
+      <el-pagination background layout="prev, pager, next" :total="total" :page-size="10" @current-change="onChange"
+        @prev-click="onChange" @next-click="onChange">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
 
-import { movies, movies_choose } from '@/api/api/movies';
+import { movies, movies_choose, keyWordSearch } from '@/api/api/movies';
 
 export default {
   name: 'MovieList',
@@ -72,17 +64,18 @@ export default {
       moveType: ['全部', '剧情', '犯罪', '喜剧', '动画', '奇幻', '爱情', '同性', '动作', '科幻', '冒险', '悬疑', '历史', '战争'],
       typeIndex: 0,
       search: "",
-      
-    
+      page: 1,
+      total: 0,
+      searchFlag: false
     }
   },
   methods: {
-    
+
     //获取所有电影列表
-    getMoviesList() {
-      movies()
+    getMoviesList(page) {
+      movies(page)
         .then(res => {
-          const { status, data } = res
+          const { status, data, pagination } = res
           if (status == 0) {
             this.moviesList = []
             this.moviesListCopy = []
@@ -90,7 +83,7 @@ export default {
               this.moviesList.push(item)
               this.moviesListCopy.push(item)
             })
-
+            this.total = pagination.total_pages * 10
           } else {
             this.$message.error(res.msg || '电影列表获取失败')
           }
@@ -115,7 +108,6 @@ export default {
                 this.moviesList.push(item)
                 this.moviesListCopy.push(item)
               })
-
             } else {
               this.$message.error(res.msg || '电影类型列表获取失败')
             }
@@ -127,35 +119,53 @@ export default {
     },
     searchFunction() {
       if (this.search == "") return
-      const keyword = this.search.trim()
-        .toLowerCase()
-      this.moviesListCopy = []
-      this.moviesList.forEach(movie => {
-        const movieName = movie.mv_name?.toLowerCase() || ''
-        if (movieName.includes(keyword)) {
-          this.moviesListCopy.push(movie)
-        }
-      })
+      this.searchFlag = true
+      keyWordSearch(this.search.toString())
+        .then(res => {
+          const { status, data } = res
+          if (status == 0) {
+            this.moviesListCopy = []
+            data.forEach(item => {
+              this.moviesListCopy.push(item)
+            })
+          } else {
+            this.$message.error(res.error || '搜索失败')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     goTodetails(id) {
       this.$router.push(`/detailsWeb?id=${id}`)
     },
     backall() {
       if (this.search == "") {
+        this.searchFlag = false
         this.moviesListCopy = []
         this.moviesList.forEach(item => {
           this.moviesListCopy.push(item)
         })
       }
-    }
+    },
+    onChange(e) {
+      this.page = e
+      this.getMoviesList(this.page)
+    },
   },
 
   created() {
-    this.getMoviesList()
-}}
+    this.getMoviesList(this.page)
+  }
+}
 </script>
 
 <style scoped>
+.page {
+  width: fit-content;
+  margin: 10px auto;
+}
+
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

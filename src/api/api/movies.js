@@ -1,12 +1,19 @@
 import service from "../config";
-export function movies() {
+export function movies(page = 1) {
     return service({
-        url: "/movie_list/movie_info/",
+        url: `/movie_list/movie_info/?page=${page}`,
         method: "get",
 
     });
 }
 
+export function keyWordSearch(data) {
+    return service({
+        url: "/search/keyword_search/",
+        method: "post",
+        data
+    })
+}
 //影片筛选
 export function movies_choose(type) {
     return service({
