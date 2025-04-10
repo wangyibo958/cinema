@@ -23,9 +23,9 @@ export function details(id = "1") {
 }
 
 //电影详情评论
-export function comment() {
+export function comment(name) {
     return service({
-        url: "/comment_list/comment_info/",
+        url: `/comment_list/comment_info/?mv_name=${name}`,
         method: "get",
 
     });

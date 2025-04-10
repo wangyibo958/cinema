@@ -28,7 +28,8 @@
     <div class="movie-container">
       <div class="movie-grid">
         <div v-for="(movie, index) in moviesListCopy" :key="index" class="movie-card"
-          @mouseover="hoverEffect = movie.movie_id" @mouseleave="hoverEffect = null">
+          @mouseover="hoverEffect = movie.movie_id" @mouseleave="hoverEffect = null"  @click="goTodetails(movie.movie_id)">
+          <!-- 在最小卡片里面渲染 -->
           <!-- 携带路径id -->
           <div class="poster-wrapper">
             <img :src="movie.image_link" :alt="movie.mv_name" class="poster"
@@ -60,18 +61,23 @@
 <script>
 
 import { movies, movies_choose } from '@/api/api/movies';
+
 export default {
   name: 'MovieList',
   data() {
     return {
+      hoverEffect: null,
       moviesList: [],
       moviesListCopy: [],
       moveType: ['全部', '剧情', '犯罪', '喜剧', '动画', '奇幻', '爱情', '同性', '动作', '科幻', '冒险', '悬疑', '历史', '战争'],
       typeIndex: 0,
-      search: ""
+      search: "",
+      
+    
     }
   },
   methods: {
+    
     //获取所有电影列表
     getMoviesList() {
       movies()
@@ -131,6 +137,9 @@ export default {
         }
       })
     },
+    goTodetails(id) {
+      this.$router.push(`/detailsWeb?id=${id}`)
+    },
     backall() {
       if (this.search == "") {
         this.moviesListCopy = []
@@ -143,9 +152,7 @@ export default {
 
   created() {
     this.getMoviesList()
-  }
-
-}
+}}
 </script>
 
 <style scoped>

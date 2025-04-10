@@ -89,24 +89,20 @@
                 <div v-for="(comment, index) in comments" :key="index" class="comment-item">
                     <div class="comment-header">
                         <div class="user-info">
-                            <div class="user-avatar"></div>
+
                             <div class="user-name-date">
                                 <h4>{{ comment.username }}</h4>
                                 <div class="user-rating">
-                                    <!-- <span v-for="n in 5" :key="n" class="small-star"
-                                        :class="{ 'filled': n <= comment.rating }"></span> -->
+
                                     <span class="comment-date">{{ comment.date }}</span>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="likes">
-                            
-                            <button class="like-btn" @click="likeComment(index)">
-                                <span class="thumb-icon"></span>
-                            </button>
-                        </div> -->
+
                     </div>
                     <p class="comment-content">{{ comment.content }}</p>
+
+
                 </div>
             </div>
         </div>
@@ -132,13 +128,8 @@ export default {
                 role: ''
             },
 
-            comments: [
-                {
-                    username: '星辰大海',
-                    date: '2024-03-15',
-                    content: '这部电影的视觉效果令人惊叹！量子幻境的设计极其创新，大胆展示了宇宙的神秘特性与物理世界奥秘。周雨晴的演技也很出众，完美诠释了天才物理学家的形象。故事情节紧凑，科幻元素与人文关怀完美结合。绝对是今年最值得期待的科幻大片！',
-                }
-            ]
+            comments: []
+
         }
     },
     methods: {
@@ -171,50 +162,51 @@ export default {
 
     },
 
-    created() {
-        const movieId = String(this.$route.query.id || "1")
-        details(movieId)
-            //！！参数类型string,不能加（{}），会被序列化为对象
-            .then(res => {
-                console.log(res);
-                const { status, data } = res
-                if (status == 0) {
-                    //data并非数组，不能还用map
-                    this.movie = {
-                        title: data.mv_name?.toString() || "暂无标题",
-                        director: data.director?.toString() || "未知导演",
-                        actors: data.scenarist?.split(',') || [],
-                        releaseDate: data.release_date?.toString() || "未知日期",
-                        description: data.quote?.toString() || "暂无简介",
-                        rating: Number(data.d_rate) || 0, // 评分保持数字类型
-                        tags: data.mv_type?.split('/') || [],
-                        poster: data.image_link,
-                        role: data.leader
+    async created() {
+        try {
+            const movieId = String(this.$route.query.id || "1")
+            const res = await details(movieId)
 
-
-
-                        //评论区
-                        // username:item.user,
-                        // date:item.create_time,
-                        // content:item.content,
-
-                    }
-                    this.castMembers = data.leader?.map(item => ({
-                        name: item.name?.toString() || "匿名演员",
-                        role: item.role?.toString() || "未知角色"
-                    })) || []
-
+            console.log(res);
+            const { status, data } = res
+            if (status == 0) {
+                //data并非数组，不能还用map
+                this.movie = {
+                    title: data.mv_name?.toString() || "暂无标题",
+                    director: data.director?.toString() || "未知导演",
+                    actors: data.scenarist?.split(',') || [],
+                    releaseDate: data.release_date?.toString() || "未知日期",
+                    description: data.quote?.toString() || "暂无简介",
+                    rating: Number(data.d_rate) || 0, // 评分保持数字类型
+                    tags: data.mv_type?.split('/') || [],
+                    poster: data.image_link,
+                    role: data.leader
                 }
-                //  else {
-                //     console.log(err);
+                comment(this.movie.title)
 
-                // }
+                const commentRes = await comment (this.movie.title)
+                if(commentRes.status==0){
+                    this.comments=(commentRes.data||[]).map(item=>({
+                        date:item.create_time?.slice(0,10)||'未知日期',
+                        content:item.content||'无内容',
+                        username:item.user
+                    })
+                )
+                }
 
-            })
-            .catch(err => {
-                console.log(err);
+                // .then(res=>{
+                //     console.log(res)
+                // })
+                // .catch(err=>{
+                //     console.log(err)
+                // })
+            }else{
+                this.$message.error(res.msg||'电影详情获取失败')
+            }
+        } catch (err) {
+            console.log(err)
 
-            })
+        }
     }
 
 }
@@ -222,13 +214,15 @@ export default {
 
 <style scoped>
 .movie-detail {
-    max-width: 100%;
+    min-width: 100vw;
     margin: 0 auto;
     padding: 30px 10% 0 1%;
     font-family: 'Arial', sans-serif;
     color: #333;
     background-color: rgb(232, 245, 255);
     min-height: 100vh;
+    padding-bottom: 50px;
+    padding-right: 10%;
 }
 
 .movie-container {
@@ -250,15 +244,18 @@ export default {
 }
 
 .movie-poster {
-    flex: 0 0 300px;
-    margin-right: 30px;
+    /* width: 25%; */
+    height: 400px;
+    /* background-color: #4a90e2; */
+    flex: 0 0 250px;
+    /* margin-right: 30px; */
     margin-top: 70px;
     margin-right: 50px;
 }
 
 .poster-placeholder {
     width: 100%;
-    height: 450px;
+    height: 400px;
     background-color: #ccc;
     border-radius: 10px;
     box-shadow: 4px 4px 10px gray;
@@ -273,10 +270,11 @@ export default {
 .movie-info {
     flex: 1;
     margin-top: 20px;
+    /* margin-right: 20px; */
 }
 
 .movie-title {
-    font-size: 28px;
+    font-size: 40px;
     margin-bottom: 20px;
     text-align: center;
 
@@ -294,7 +292,7 @@ export default {
 
 .label {
     font-weight: bold;
-    margin-right: 5px;
+    /* margin-right: 5px; */
 }
 
 .release-date {
@@ -308,7 +306,7 @@ export default {
     width: 16px;
     height: 16px;
     background-color: #4a90e2;
-    margin-right: 5px;
+    /* margin-right: 5px; */
     border-radius: 2px;
 }
 
@@ -397,6 +395,10 @@ export default {
     padding-left: 10px;
 }
 
+/* .comments{
+    margin-left: 400px;
+} */
+
 .comments-section h2 {
     font-size: 22px;
     margin-bottom: 20px;
@@ -447,11 +449,15 @@ export default {
     font-size: 14px;
 }
 
+
+/* 评论板块 */
 .comments-section {
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-left:10%;
+    /* margin-bottom: 40px; */
 }
 
 .comment-form {
@@ -592,5 +598,6 @@ export default {
     font-size: 14px;
     line-height: 1.6;
     margin: 0;
+    margin-bottom: 25px;
 }
 </style>

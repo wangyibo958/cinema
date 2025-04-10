@@ -35,7 +35,7 @@
     <div class="movie-container">
       <div class="movie-grid">
         <div v-for="(movie, index) in movies" :key="index" class="movie-card" @mouseover="hoverEffect = movie.id"
-          @mouseleave="hoverEffect = null" @click="goTodetails(movie.id)">
+          @mouseleave="hoverEffect = null" @click="goTodetails(movie.id,movie.name)">
           <!-- 携带路径id -->
           <div class="poster-wrapper">
             <img :src="movie.poster" :alt="movie.title" class="poster"
@@ -92,9 +92,15 @@ export default {
 
       this.$router.push('/moviesWeb')
     },
-    goTodetails(id) {
-      this.$router.push(`/detailsWeb?id=${id}`)
-    }//传参  id  待修改
+    goTodetails(id,name) {
+      this.$router.push({
+        path:'/detailsWeeb',
+        query:{
+          id:id,
+          name:name
+        }
+      })
+    }
 
   },
 
