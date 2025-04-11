@@ -37,3 +37,31 @@ export function comment(name) {
 
     });
 }
+
+export function getCimenaList(page) {
+    return service({
+        url: `/cinema/cinema_list/?page=${page}`,
+        method: "get"
+    })
+}
+
+export function getCimenaDetail(id) {
+    return service({
+        url: `/cinema/cinema_info/?cinema_id=${id}`,
+        method: "get"
+    })
+}
+
+export function getCimenaComm(id) {
+    return service({
+        url: `/rate/cinema_rate_list/?cinema_id=${id}`,
+        method: "get"
+    })
+}
+
+export function getCimenaMovie(id) {
+    return service({
+        url: `/screening/screening_info/?cinema_id=${id}`,
+        method: "get"
+    })
+}

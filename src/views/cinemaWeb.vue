@@ -10,7 +10,7 @@
         </div>
         <!-- 影院部分 -->
         <div class="content">
-            <div v-for="(cinema, cinemaIndex) in cinemas" :key="cinema.id" class="cinema-item">
+            <div v-for="(cinema, cinemaIndex) in cinemaList" :key="cinema.id" class="cinema-item">
                 <!-- 影院信息 -->
                 <div class="cinema-info">
                     <!-- 影院名称＋评分 -->
@@ -37,10 +37,6 @@
                             <div class="el-icon-phone-outline"></div>
                             <span>{{ cinema.phone }}</span>
                         </div>
-                        <div class="detail-item time">
-                            <div class="el-icon-time"></div>
-                            <span>{{ cinema.openingHours }}</span>
-                        </div>
                     </div>
                 </div>
                 <!-- 放映电影信息 -->
@@ -49,13 +45,13 @@
                         <div class="movie-col">电影</div>
                         <div class="time-col">时间</div>
                         <div class="price-col">价格</div>
-                        <div class="hall-col">影厅</div>
+                        <div class="hall-col">语言</div>
                     </div>
                     <div v-for="showtime in cinema.showtimes" :key="showtime.id" class="showtime-item">
-                        <div class="movie-col">{{ showtime.movie }}</div>
+                        <div class="movie-col">{{ showtime.name }}</div>
                         <div class="time-col">{{ showtime.time }}</div>
                         <div class="price-col">¥{{ showtime.price }}</div>
-                        <div class="hall-col">{{ showtime.hall }}</div>
+                        <div class="hall-col">{{ showtime.language }}</div>
                         <el-button type="primary" @click="goToBuy">购票</el-button>
                     </div>
                 </div>
@@ -132,87 +128,38 @@
     </div>
 </template>
 <script>
+import { getCimenaList, getCimenaDetail, getCimenaComm, getCimenaMovie } from '@/api/api/movies'
 export default {
     name: 'CinemaDetail',
     data() {
         return {
             submitting: false,
-            cinemas: [
-                {
-                    id: 1,
-                    name: '星光国际影城',
-                    rating: 4.8,
-                    address: '北京市朝阳区三里屯路19号太古里北区N8号楼',
-                    phone: '010-64516888',
-                    openingHours: '10:00 - 22:00',
-                    showtimes: [
-                        { id: 101, movie: '流浪地球3', time: '14:30', price: '43', hall: 'IMAX厅' },
-                        { id: 102, movie: '热辣滚烫', time: '16:45', price: '38', hall: '2号厅' },
-                        { id: 103, movie: '飞驰人生2', time: '19:00', price: '45', hall: '全景声厅' }
-                    ],
-                    showReviews: false,
-                    showWriteReview: false,
-                    draftReview: { rating: 0, content: '' },
-                    reviews: [
-                        {
-                            id: 1001,
-                            userName: '电影爱好者',
-                            rating: 5,
-                            date: '2024-02-15T10:30:00',
-                            content: '设施非常现代化，IMAX厅体验极佳，座椅舒适，整体环境也很干净。服务人员态度友好，整体观影体验超出预期！'
-                        }
-                    ]
-                },
-                {
-                    id: 1,
-                    name: '星光国际影城',
-                    rating: 4.8,
-                    address: '北京市朝阳区三里屯路19号太古里北区N8号楼',
-                    phone: '010-64516888',
-                    openingHours: '10:00 - 22:00',
-                    showtimes: [
-                        { id: 101, movie: '流浪地球3', time: '14:30', price: '43', hall: 'IMAX厅' },
-                        { id: 102, movie: '热辣滚烫', time: '16:45', price: '38', hall: '2号厅' },
-                        { id: 103, movie: '飞驰人生2', time: '19:00', price: '45', hall: '全景声厅' }
-                    ],
-                    showReviews: false,
-                    showWriteReview: false,
-                    draftReview: { rating: 0, content: '' },
-                    reviews: [
-                        {
-                            id: 1001,
-                            userName: '电影爱好者',
-                            rating: 5,
-                            date: '2024-02-15T10:30:00',
-                            content: '设施非常现代化，IMAX厅体验极佳，座椅舒适，整体环境也很干净。服务人员态度友好，整体观影体验超出预期！'
-                        }
-                    ]
-                }
-            ]
+            cinemaList: [],
+            cinemaID: [],
         }
     },
     methods: {
         // 响应式切换方法
         toggleReviews(index) {
-            this.$set(this.cinemas[index], 'showReviews', !this.cinemas[index].showReviews)
-            if (this.cinemas[index].showReviews) {
-                this.$set(this.cinemas[index], 'showWriteReview', false)
+            this.$set(this.cinemaList[index], 'showReviews', !this.cinemaList[index].showReviews)
+            if (this.cinemaList[index].showReviews) {
+                this.$set(this.cinemaList[index], 'showWriteReview', false)
             }
         },
         toggleWriteReview(index) {
-            this.$set(this.cinemas[index], 'showWriteReview', !this.cinemas[index].showWriteReview)
-            if (this.cinemas[index].showWriteReview) {
-                this.$set(this.cinemas[index], 'showReviews', false)
-                this.$set(this.cinemas[index], 'draftReview', { rating: 0, content: '' })
+            this.$set(this.cinemaList[index], 'showWriteReview', !this.cinemaList[index].showWriteReview)
+            if (this.cinemaList[index].showWriteReview) {
+                this.$set(this.cinemaList[index], 'showReviews', false)
+                this.$set(this.cinemaList[index], 'draftReview', { rating: 0, content: '' })
             }
         },
         // 评分设置
         setRating(index, rating) {
-            this.$set(this.cinemas[index].draftReview, 'rating', rating)
+            this.$set(this.cinemaList[index].draftReview, 'rating', rating)
         },
         // 表单验证
         isReviewValid(index) {
-            const draft = this.cinemas[index].draftReview
+            const draft = this.cinemaList[index].draftReview
             return draft.rating > 0 && draft.content.trim().length >= 10
         },
         // 提交评价
@@ -257,7 +204,80 @@ export default {
         //去购票
         goToBuy() {
             this.$router.push('/buyWeb')
+        },
+        getCimena(page = 1) {
+            getCimenaList(page)
+                .then(res => {
+                    const { status, data } = res
+                    if (status == 0) {
+                        this.cinemaList = []
+                        data.forEach(item => {
+                            this.cinemaID.push(item.cinema_id)
+                        })
+                        const requests = this.cinemaID.map(id =>
+                            Promise.all([
+                                getCimenaDetail(id),
+                                getCimenaComm(id),
+                                getCimenaMovie(id)
+                            ])
+                        )
+                        Promise.allSettled(requests).then(results => {
+                            results.forEach((promiseResult, index) => {
+                                const cinemaId = this.cinemaID[index];
+                                const cinemaInfo = {
+                                    cinemaid: 0,
+                                    name: "",
+                                    address: "",
+                                    rating: 4.8,
+                                    phone: "",
+                                    showReviews: false,
+                                    showWriteReview: false,
+                                    reviews: [],
+                                    showtimes: []
+                                }
+                                if (promiseResult.status === 'fulfilled') {
+                                    const [detailRes, commRes, movieRes] = promiseResult.value
+                                    cinemaInfo.cinemaid = detailRes.data[0].cinema_id
+                                    cinemaInfo.name = detailRes.data[0].cinema_name
+                                    cinemaInfo.address = detailRes.data[0].cinema_address
+                                    cinemaInfo.phone = detailRes.data[0].telephone
+                                    cinemaInfo.rating = detailRes.data[0].rating || 4.8
+                                    commRes.data.forEach(item => {
+                                        const comminfo = {
+                                            user: item.user,
+                                            rating: item.mark / 2,
+                                            comment: item.comment
+                                        }
+                                        cinemaInfo.reviews.push(comminfo)
+                                    })
+                                    movieRes.data.forEach(item => {
+                                        const movieInfo = {
+                                            name: item.movie,
+                                            time: item.screening_time,
+                                            price: item.ticket_price,
+                                            auditorium: item.auditorium,
+                                            language: item.language
+                                        }
+                                        cinemaInfo.showtimes.push(movieInfo)
+                                    })
+                                } else {
+                                    console.error(`影院 ${cinemaId} 请求失败:`, promiseResult.reason);
+                                }
+                                this.cinemaList.push(cinemaInfo)
+                            })
+                            console.log(this.cinemaList)
+                        })
+                    } else {
+                        this.$message.error(res.error || '影院列表获取失败')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         }
+    },
+    created() {
+        this.getCimena()
     }
 }
 </script>

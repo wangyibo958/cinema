@@ -110,8 +110,7 @@
 </template>
 
 <script>
-import { details } from './api/api/movies';
-import { comment } from './api/api/movies';
+import { details, comment } from './api/api/movies';
 export default {
     name: 'MovieDetail',
     data() {
@@ -184,14 +183,14 @@ export default {
                 }
                 comment(this.movie.title)
 
-                const commentRes = await comment (this.movie.title)
-                if(commentRes.status==0){
-                    this.comments=(commentRes.data||[]).map(item=>({
-                        date:item.create_time?.slice(0,10)||'未知日期',
-                        content:item.content||'无内容',
-                        username:item.user
+                const commentRes = await comment(this.movie.title)
+                if (commentRes.status == 0) {
+                    this.comments = (commentRes.data || []).map(item => ({
+                        date: item.create_time?.slice(0, 10) || '未知日期',
+                        content: item.content || '无内容',
+                        username: item.user
                     })
-                )
+                    )
                 }
 
                 // .then(res=>{
@@ -200,8 +199,8 @@ export default {
                 // .catch(err=>{
                 //     console.log(err)
                 // })
-            }else{
-                this.$message.error(res.msg||'电影详情获取失败')
+            } else {
+                this.$message.error(res.msg || '电影详情获取失败')
             }
         } catch (err) {
             console.log(err)
@@ -456,7 +455,7 @@ export default {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-left:10%;
+    margin-left: 10%;
     /* margin-bottom: 40px; */
 }
 

@@ -124,7 +124,6 @@ export default {
           const { status, data } = res
           if (status == 0) {
             this.personalizedMovies = []
-
             data.forEach(element => {
               this.personalizedMovies.push({
                 title: element.mv_name,
