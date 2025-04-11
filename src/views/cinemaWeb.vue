@@ -125,6 +125,11 @@
                 </div>
             </div>
         </div>
+        <div class="page">
+            <el-pagination background layout="prev, pager, next" :total="total" :page-size="10"
+                @current-change="onChange" @prev-click="onChange" @next-click="onChange">
+            </el-pagination>
+        </div>
     </div>
 </template>
 <script>
@@ -134,6 +139,8 @@ export default {
     data() {
         return {
             submitting: false,
+            page: 1,
+            total: 0,
             cinemaList: [],
             cinemaID: [],
         }
@@ -205,15 +212,20 @@ export default {
         goToBuy() {
             this.$router.push('/buyWeb')
         },
-        getCimena(page = 1) {
+        onChange(e) {
+            this.page = e
+            this.getCimena(this.page)
+        },
+        getCimena(page) {
             getCimenaList(page)
                 .then(res => {
-                    const { status, data } = res
+                    const { status, data, paginator } = res
                     if (status == 0) {
                         this.cinemaList = []
                         data.forEach(item => {
                             this.cinemaID.push(item.cinema_id)
                         })
+                        this.total = paginator.total_pages * 10
                         const requests = this.cinemaID.map(id =>
                             Promise.all([
                                 getCimenaDetail(id),
@@ -277,13 +289,18 @@ export default {
         }
     },
     created() {
-        this.getCimena()
+        this.getCimena(this.page)
     }
 }
 </script>
 
 
 <style scoped>
+.page {
+    width: fit-content;
+    margin: 10px auto;
+}
+
 .cinema-detail {
     max-width: 100%;
     margin: 0 auto;
